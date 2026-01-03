@@ -4,18 +4,12 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
-// Only enable PWA in production
-const isProduction = process.env.NODE_ENV === 'production';
+// @ts-ignore - next-pwa type definitions conflict with Next.js 16
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+});
 
-if (isProduction) {
-  const withPWA = require('next-pwa')({
-    dest: 'public',
-    register: true,
-    skipWaiting: true,
-  });
-  module.exports = withPWA(nextConfig);
-} else {
-  module.exports = nextConfig;
-}
-
-export const turbopack = {};
+export default withPWA(nextConfig);

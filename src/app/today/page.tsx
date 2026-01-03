@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { formatDateDisplay } from '@/utils/date';
 import MealCard from '@/components/MealCard';
 import QuickRecordForm from '@/components/QuickRecordForm';
+import { MealLog } from '@/lib/types';
 
 export default async function TodayPage() {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ export default async function TodayPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let mealLogs = [];
+  let mealLogs: MealLog[] = [];
   let error = null;
 
   try {

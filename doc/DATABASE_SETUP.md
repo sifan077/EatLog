@@ -7,14 +7,22 @@
 已创建 `meal_logs` 表，包含以下字段：
 - `id`: UUID 主键
 - `user_id`: 用户 ID（关联 auth.users）
-- `photo_path`: 照片路径（必填）
+- `photo_paths`: 照片路径数组（必填，支持多图）
 - `content`: 简短描述（可选）
-- `meal_type`: 餐次类型（必填）
-- `eaten_at`: 进餐时间（默认当前时间）
+- `meal_type`: 餐次类型（必填，6种类型）
+- `eaten_at`: 进餐时间（默认当前时间，北京时间）
 - `location`: 地点（可选）
 - `tags`: 标签数组（可选）
 - `created_at`: 创建时间
 - `updated_at`: 更新时间
+
+**餐次类型：**
+- `breakfast`: 早餐 🌅 (5:00-8:59)
+- `lunch`: 午餐 🍜 (9:00-13:59)
+- `afternoon_snack`: 下午加餐 ☕ (14:00-16:59)
+- `dinner`: 晚餐 🍽️ (17:00-20:59)
+- `evening_snack`: 晚上加餐 🌙 (21:00-4:59)
+- `snack`: 零食 🍪 (全天)
 
 ### 2. RLS 策略
 
@@ -35,15 +43,15 @@
 ### 4. 类型定义 (src/lib/types.ts)
 
 已定义 TypeScript 类型：
-- `MealLog`: 饮食记录类型
-- `MealType`: 餐次类型
+- `MealLog`: 饮食记录类型（支持多图）
+- `MealType`: 餐次类型（6种）
 - `MealLogInput`: 创建记录输入
 - `MealLogUpdate`: 更新记录输入
 
 ### 5. 常量定义 (src/lib/constants.ts)
 
 已定义业务常量：
-- `MEAL_TYPES`: 餐次类型数组
+- `MEAL_TYPES`: 餐次类型数组（6种）
 - `TAG_SUGGESTIONS`: 标签建议
 - `STORAGE_BUCKET`: Storage bucket 名称
 - `MEAL_TIME_RANGES`: 餐次时间范围
@@ -51,9 +59,9 @@
 ### 6. 工具函数
 
 #### 日期工具 (src/utils/date.ts)
-- `getStartOfDay()`: 获取一天开始时间
-- `getEndOfDay()`: 获取一天结束时间
-- `detectMealType()`: 根据时间自动判断餐次
+- `getStartOfDay()`: 获取一天开始时间（北京时间）
+- `getEndOfDay()`: 获取一天结束时间（北京时间）
+- `detectMealType()`: 根据北京时间自动判断餐次
 - `formatDateDisplay()`: 格式化日期显示
 - `formatTimeDisplay()`: 格式化时间显示
 - `isSameDay()`: 判断是否同一天
@@ -72,9 +80,9 @@
 - `getTodayMealLogs()`: 获取今日记录
 - `getMealLogsByDate()`: 按日期范围获取记录
 - `getMealLogById()`: 根据 ID 获取单条记录
-- `createMealLog()`: 创建新记录
+- `createMealLog()`: 创建新记录（支持多图上传）
 - `updateMealLog()`: 更新记录
-- `deleteMealLog()`: 删除记录（包括照片）
+- `deleteMealLog()`: 删除记录（包括多张照片）
 - `searchMealLogs()`: 关键词搜索
 - `searchMealLogsByTags()`: 标签搜索
 
@@ -102,6 +110,7 @@
 - 将 bucket 设置为私有（Public: ❌）可以防止未授权访问和盗刷
 - 图片通过签名 URL 访问，每次请求都会验证用户权限
 - 签名 URL 有效期为 24 小时，过期后需要重新生成
+- 支持多图上传，每张图片独立存储
 
 ### 3. 配置 Storage Policies
 
@@ -140,6 +149,7 @@
 3. **有效期限制**：签名 URL 有效期 24 小时，防止长期滥用
 4. **路径隔离**：每个用户的照片存储在独立的文件夹中（`{user_id}/`）
 5. **权限验证**：所有操作都通过 Supabase Auth 验证用户身份
+6. **多图支持**：每条记录可以包含多张照片，每张独立管理
 
 ## 验证配置
 
@@ -161,10 +171,24 @@
 4. 检查 Storage policies 是否生效：
    - 在 Storage → Policies 页面查看策略列表
 
-## 下一步
+## 已实现的功能
 
-数据库和存储配置完成后，可以开始实现：
-1. `/today` 页面：拍照上传 + 今日记录列表
-2. 照片上传组件
-3. 餐次选择组件
-4. 记录卡片组件
+1. ✅ 用户认证（邮箱登录/登出）
+2. ✅ 今日记录页面
+3. ✅ 快速记录表单
+4. ✅ 摄像头拍照（移动端）
+5. ✅ 文件上传（支持多图）
+6. ✅ 图片自动压缩
+7. ✅ 多图上传和展示
+8. ✅ 餐次选择（6种类型）
+9. ✅ 北京时间支持
+10. ✅ PWA 支持
+11. ✅ 安全的图片访问（签名 URL）
+
+## 下一步计划
+
+数据库和存储配置完成后，可以继续实现：
+1. `/edit/[id]` 页面：编辑记录详情
+2. `/calendar` 页面：按日期浏览历史
+3. `/search` 页面：关键词搜索
+4. `/stats` 页面：统计功能

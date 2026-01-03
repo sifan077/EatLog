@@ -185,7 +185,7 @@ export async function deleteMealLog(id: string, photoPaths: string[]): Promise<v
 
     if (storageError) {
       console.error('Storage error:', storageError);
-      throw new Error(`Failed to delete photos: ${storageError.message} (Code: ${storageError.code})`);
+      throw new Error(`Failed to delete photos: ${storageError.message}`);
     }
   }
 
