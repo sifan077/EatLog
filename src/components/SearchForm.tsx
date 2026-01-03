@@ -51,7 +51,7 @@ export default function SearchForm() {
         (data || []).map(async (meal) => {
           try {
             const photoUrls = await Promise.all(
-              meal.photo_paths.map(async (photoPath) => {
+              meal.photo_paths.map(async (photoPath: string) => {
                 const { data, error: urlError } = await supabase.storage
                   .from('meal-photos')
                   .createSignedUrl(photoPath, 60 * 60 * 24);
