@@ -19,7 +19,10 @@ export default function AddTodoForm() {
   }
 
   return (
-    <form action={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm mb-6">
+    <form
+      action={handleSubmit}
+      className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm mb-6"
+    >
       <h2 className="text-xl font-semibold mb-4">Add New Todo</h2>
       <div className="space-y-4">
         <div>

@@ -20,9 +20,11 @@ export default function TodayLoading() {
               <div className="h-32 bg-gray-200 rounded-xl animate-pulse" />
               <div className="h-24 bg-gray-200 rounded-xl animate-pulse" />
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-                {Array(6).fill(0).map((_, i) => (
-                  <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
-                ))}
+                {Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
+                  ))}
               </div>
             </div>
           </div>

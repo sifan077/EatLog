@@ -5,7 +5,7 @@
 ## ✨ 功能特点
 
 ### 核心功能
-- 📸 **拍照上传** - 支持摄像头拍照和文件上传
+
 - 🖼️ **多图支持** - 一次记录可以上传多张照片
 - 🗜️ **自动压缩** - 图片自动压缩，节省存储空间
 - 📝 **简短描述** - 快速记录食物描述
@@ -14,12 +14,13 @@
 - ⏰ **智能判断** - 根据北京时间自动判断餐次
 
 ### 移动端优化
+
 - 📱 **PWA 支持** - 可安装为移动应用
-- 📷 **摄像头调用** - 直接调用设备摄像头拍照
 - 🎨 **响应式设计** - 完美适配手机和平板
 - ⚡ **离线支持** - PWA 离线缓存
 
 ### 安全特性
+
 - 🔒 **用户认证** - 基于 Supabase Auth
 - 🛡️ **RLS 策略** - 用户只能访问自己的数据
 - 🔐 **私有存储** - 照片存储在私有 bucket
@@ -50,6 +51,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_publishable_key
 ```
 
 获取方式：
+
 1. 访问 [Supabase Dashboard](https://supabase.com/dashboard)
 2. 选择项目 → Settings → API
 3. 复制 Project URL 和 anon/public key
@@ -59,6 +61,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_publishable_key
 详细步骤请参考 [doc/DATABASE_SETUP.md](./doc/DATABASE_SETUP.md)
 
 简要步骤：
+
 1. 在 Supabase Dashboard 的 SQL Editor 中执行 `supabase-schema.sql`
 2. 创建名为 `meal-photos` 的 Storage bucket（私有）
 3. 配置 Storage RLS 策略
@@ -145,30 +148,33 @@ pnpm format:check
 
 ## 📊 餐次类型
 
-| 值 | 标签 | Emoji | 时间范围（北京时间） |
-|---|------|-------|---------------------|
-| `breakfast` | 早餐 | 🌅 | 5:00 - 8:59 |
-| `lunch` | 午餐 | 🍜 | 9:00 - 13:59 |
-| `afternoon_snack` | 下午加餐 | ☕ | 14:00 - 16:59 |
-| `dinner` | 晚餐 | 🍽️ | 17:00 - 20:59 |
-| `evening_snack` | 晚上加餐 | 🌙 | 21:00 - 4:59 |
-| `snack` | 零食 | 🍪 | 全天 |
+| 值                | 标签     | Emoji | 时间范围（北京时间） |
+| ----------------- | -------- | ----- | -------------------- |
+| `breakfast`       | 早餐     | 🌅    | 5:00 - 8:59          |
+| `lunch`           | 午餐     | 🍜    | 9:00 - 13:59         |
+| `afternoon_snack` | 下午加餐 | ☕    | 14:00 - 16:59        |
+| `dinner`          | 晚餐     | 🍽️    | 17:00 - 20:59        |
+| `evening_snack`   | 晚上加餐 | 🌙    | 21:00 - 4:59         |
+| `snack`           | 零食     | 🍪    | 全天                 |
 
 ## 🔐 安全说明
 
 ### 数据安全
+
 - 所有数据存储在 Supabase
 - 启用行级安全（RLS）
 - 用户只能访问自己的数据
 - 照片存储在私有 bucket
 
 ### 访问控制
+
 - 签名 URL 机制
 - 24 小时有效期
 - 防止未授权访问
 - 防止盗刷
 
 ### 部署要求
+
 - 必须使用 HTTPS
 - 正确配置环境变量
 - 配置 Supabase RLS 策略
@@ -185,6 +191,7 @@ pnpm format:check
 ### 其他平台
 
 支持任何支持 Next.js 的平台：
+
 - Netlify
 - Railway
 - Render

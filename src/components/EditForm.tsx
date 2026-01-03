@@ -40,7 +40,11 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const compressImage = (file: File, maxWidth: number = 1280, quality: number = 0.6): Promise<File> => {
+  const compressImage = (
+    file: File,
+    maxWidth: number = 1280,
+    quality: number = 0.6
+  ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -247,10 +251,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
       }
 
       // Delete record from database
-      const { error: deleteError } = await supabase
-        .from('meal_logs')
-        .delete()
-        .eq('id', meal.id);
+      const { error: deleteError } = await supabase.from('meal_logs').delete().eq('id', meal.id);
 
       if (deleteError) {
         throw new Error(`删除失败: ${deleteError.message}`);
@@ -271,16 +272,15 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
   );
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50">
-      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">
-        编辑记录
-      </h3>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50"
+    >
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">编辑记录</h3>
 
       {/* Photos Section */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
-          照片
-        </label>
+        <label className="block text-sm font-semibold text-gray-700 mb-3">照片</label>
 
         {/* Existing Photos */}
         {existingPhotoUrls.length > 0 && (
@@ -351,9 +351,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           />
           <div className="text-4xl mb-2">📸</div>
           <p className="text-gray-700 font-medium">添加更多照片</p>
-          <p className="text-sm text-gray-500 mt-1">
-            支持 JPG、PNG、GIF、WebP，最大 10MB
-          </p>
+          <p className="text-sm text-gray-500 mt-1">支持 JPG、PNG、GIF、WebP，最大 10MB</p>
         </div>
       </div>
 
@@ -372,16 +370,12 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           placeholder="简单描述一下这顿饭..."
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 resize-none"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">
-          {content.length}/200
-        </div>
+        <div className="text-right text-xs text-gray-500 mt-1">{content.length}/200</div>
       </div>
 
       {/* Meal Type */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          餐次
-        </label>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">餐次</label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
           {MEAL_TYPES.map((type) => (
             <button
@@ -438,9 +432,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-          可选，默认为 0
-        </p>
+        <p className="text-xs text-gray-500 mt-1">可选，默认为 0</p>
       </div>
 
       {/* Location */}
@@ -458,16 +450,12 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           placeholder="例如：家里、公司、餐厅..."
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">
-          {location.length}/100
-        </div>
+        <div className="text-right text-xs text-gray-500 mt-1">{location.length}/100</div>
       </div>
 
       {/* Tags */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          标签
-        </label>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">标签</label>
         <div className="relative">
           <input
             type="text"
@@ -523,9 +511,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             ))}
           </div>
         )}
-        <div className="text-xs text-gray-500 mt-2">
-          {tags.length}/10 个标签
-        </div>
+        <div className="text-xs text-gray-500 mt-2">{tags.length}/10 个标签</div>
       </div>
 
       {/* Error Message */}
@@ -567,12 +553,8 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl">
-            <h4 className="text-xl font-semibold text-gray-900 mb-4">
-              确认删除
-            </h4>
-            <p className="text-gray-600 mb-6">
-              确定要删除这条记录吗？此操作无法撤销。
-            </p>
+            <h4 className="text-xl font-semibold text-gray-900 mb-4">确认删除</h4>
+            <p className="text-gray-600 mb-6">确定要删除这条记录吗？此操作无法撤销。</p>
             <div className="flex gap-3">
               <button
                 type="button"

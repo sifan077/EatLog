@@ -38,10 +38,10 @@ export const STORAGE_PATH_FORMAT = '{user_id}/{timestamp}_{random}.jpg';
 
 // Time Ranges for Meal Types (for auto-detection)
 export const MEAL_TIME_RANGES = {
-  breakfast: { start: 5, end: 8 },       // 5:00 - 8:59
-  lunch: { start: 9, end: 13 },          // 9:00 - 13:59
+  breakfast: { start: 5, end: 8 }, // 5:00 - 8:59
+  lunch: { start: 9, end: 13 }, // 9:00 - 13:59
   afternoon_snack: { start: 14, end: 16 }, // 14:00 - 16:59
-  dinner: { start: 17, end: 20 },        // 17:00 - 20:59
-  evening_snack: { start: 21, end: 4 },  // 21:00 - 4:59 (next day)
-  snack: { start: 0, end: 23 },          // All day
+  dinner: { start: 17, end: 20 }, // 17:00 - 20:59
+  evening_snack: { start: 21, end: 4 }, // 21:00 - 4:59 (next day)
+  snack: { start: 0, end: 23 }, // All day
 } as const;

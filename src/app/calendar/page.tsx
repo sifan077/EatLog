@@ -17,9 +17,7 @@ export default async function CalendarPage() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50">
           <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-white/50">
             <div className="text-6xl mb-4">🔐</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              请先登录
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">请先登录</h2>
             <a
               href="/login"
               className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-xl font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all duration-200"
@@ -70,7 +68,10 @@ export default async function CalendarPage() {
         photoUrlsMap.set(meal.id, photoUrls);
       } catch (err) {
         console.error('Error creating signed URLs:', err);
-        photoUrlsMap.set(meal.id, meal.photo_paths.map(() => null));
+        photoUrlsMap.set(
+          meal.id,
+          meal.photo_paths.map(() => null)
+        );
       }
     })
   );
@@ -80,12 +81,8 @@ export default async function CalendarPage() {
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 pt-4">
         {/* Page Header */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            日历浏览
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">
-            查看历史记录
-          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">日历浏览</h2>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">查看历史记录</p>
         </div>
 
         {/* Main Content */}

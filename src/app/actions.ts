@@ -11,7 +11,10 @@ import { getStartOfDay, getEndOfDay } from '@/utils/date';
 
 export async function getTodos() {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('todos').select('*').order('created_at', { ascending: false });
+  const { data, error } = await supabase
+    .from('todos')
+    .select('*')
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Supabase error:', error);
@@ -147,7 +150,7 @@ export async function createMealLog(mealLog: MealLogInput): Promise<MealLog> {
 // Update an existing meal log
 export async function updateMealLog(
   id: string,
-  updates: Partial<Omit<MealLogInput, 'photo_path'>>,
+  updates: Partial<Omit<MealLogInput, 'photo_path'>>
 ): Promise<MealLog> {
   const supabase = await createClient();
 

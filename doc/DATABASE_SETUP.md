@@ -5,6 +5,7 @@
 ### 1. 数据库 Schema (supabase-schema.sql)
 
 已创建 `meal_logs` 表，包含以下字段：
+
 - `id`: UUID 主键
 - `user_id`: 用户 ID（关联 auth.users）
 - `photo_paths`: 照片路径数组（必填，支持多图）
@@ -18,6 +19,7 @@
 - `updated_at`: 更新时间
 
 **餐次类型：**
+
 - `breakfast`: 早餐 🌅 (5:00-8:59)
 - `lunch`: 午餐 🍜 (9:00-13:59)
 - `afternoon_snack`: 下午加餐 ☕ (14:00-16:59)
@@ -28,6 +30,7 @@
 ### 2. RLS 策略
 
 已启用行级安全（RLS），确保用户只能访问自己的数据：
+
 - SELECT: 只能查看自己的记录
 - INSERT: 只能插入自己的记录
 - UPDATE: 只能更新自己的记录
@@ -36,6 +39,7 @@
 ### 3. 索引优化
 
 已创建以下索引以提升查询性能：
+
 - `idx_meal_logs_user_id`: 用户 ID
 - `idx_meal_logs_eaten_at`: 进餐时间
 - `idx_meal_logs_meal_type`: 餐次类型
@@ -44,6 +48,7 @@
 ### 4. 类型定义 (src/lib/types.ts)
 
 已定义 TypeScript 类型：
+
 - `MealLog`: 饮食记录类型（支持多图）
 - `MealType`: 餐次类型（6种）
 - `MealLogInput`: 创建记录输入
@@ -52,6 +57,7 @@
 ### 5. 常量定义 (src/lib/constants.ts)
 
 已定义业务常量：
+
 - `MEAL_TYPES`: 餐次类型数组（6种）
 - `TAG_SUGGESTIONS`: 标签建议
 - `STORAGE_BUCKET`: Storage bucket 名称
@@ -60,6 +66,7 @@
 ### 6. 工具函数
 
 #### 日期工具 (src/utils/date.ts)
+
 - `getStartOfDay()`: 获取一天开始时间（北京时间）
 - `getEndOfDay()`: 获取一天结束时间（北京时间）
 - `detectMealType()`: 根据北京时间自动判断餐次
@@ -69,6 +76,7 @@
 - `getDaysBetween()`: 计算日期差
 
 #### Storage 工具 (src/utils/supabase/storage.ts)
+
 - `generatePhotoPath()`: 生成照片路径
 - `getPhotoPublicUrl()`: 获取照片公共 URL
 - `getFileExtension()`: 获取文件扩展名
@@ -78,6 +86,7 @@
 ### 7. Server Actions (src/app/actions.ts)
 
 已实现饮食记录的 CRUD 操作：
+
 - `getTodayMealLogs()`: 获取今日记录
 - `getMealLogsByDate()`: 按日期范围获取记录
 - `getMealLogById()`: 根据 ID 获取单条记录
@@ -108,6 +117,7 @@
 4. 点击 "Create bucket"
 
 **安全说明：**
+
 - 将 bucket 设置为私有（Public: ❌）可以防止未授权访问和盗刷
 - 图片通过签名 URL 访问，每次请求都会验证用户权限
 - 签名 URL 有效期为 24 小时，过期后需要重新生成
@@ -118,33 +128,40 @@
 在 Storage → Policies 页面，为 `meal-photos` bucket 创建以下策略：
 
 #### 策略 1: 允许用户上传照片
+
 - Name: `Users can upload own photos`
 - Operation: INSERT
 - Target: bucket_id = 'meal-photos'
 - Using expression:
+
 ```sql
 (auth.uid()::text = (storage.foldername(name))[1])
 ```
 
 #### 策略 2: 允许用户查看自己的照片
+
 - Name: `Users can view own photos`
 - Operation: SELECT
 - Target: bucket_id = 'meal-photos'
 - Using expression:
+
 ```sql
 (auth.uid()::text = (storage.foldername(name))[1])
 ```
 
 #### 策略 3: 允许用户删除自己的照片
+
 - Name: `Users can delete own photos`
 - Operation: DELETE
 - Target: bucket_id = 'meal-photos'
 - Using expression:
+
 ```sql
 (auth.uid()::text = (storage.foldername(name))[1])
 ```
 
 **安全机制说明：**
+
 1. **RLS 策略**：确保用户只能访问自己文件夹下的照片
 2. **签名 URL**：每次访问图片都需要服务端生成带签名的临时 URL
 3. **有效期限制**：签名 URL 有效期 24 小时，防止长期滥用
@@ -157,11 +174,13 @@
 完成上述步骤后，可以验证配置是否正确：
 
 1. 检查数据库表是否创建成功：
+
    ```sql
    SELECT * FROM meal_logs LIMIT 1;
    ```
 
 2. 检查 RLS 策略是否生效：
+
    ```sql
    SELECT * FROM pg_policies WHERE tablename = 'meal_logs';
    ```
@@ -189,6 +208,7 @@
 ## 下一步计划
 
 数据库和存储配置完成后，可以继续实现：
+
 1. 导航栏（页面间导航）
 2. `/calendar` 页面：按日期浏览历史
 3. `/search` 页面：关键词搜索

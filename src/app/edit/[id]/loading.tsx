@@ -20,9 +20,11 @@ export default function EditLoading() {
             <div className="mb-6">
               <div className="h-5 bg-gray-200 rounded w-12 mb-3 animate-pulse" />
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {Array(3).fill(0).map((_, i) => (
-                  <div key={i} className="h-28 sm:h-32 bg-gray-200 rounded-lg animate-pulse" />
-                ))}
+                {Array(3)
+                  .fill(0)
+                  .map((_, i) => (
+                    <div key={i} className="h-28 sm:h-32 bg-gray-200 rounded-lg animate-pulse" />
+                  ))}
               </div>
               <div className="h-32 bg-gray-200 rounded-xl mt-4 animate-pulse" />
             </div>
@@ -37,9 +39,11 @@ export default function EditLoading() {
             <div className="mb-6">
               <div className="h-5 bg-gray-200 rounded w-12 mb-2 animate-pulse" />
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-                {Array(6).fill(0).map((_, i) => (
-                  <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
-                ))}
+                {Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
+                  ))}
               </div>
             </div>
 
@@ -66,9 +70,11 @@ export default function EditLoading() {
               <div className="h-5 bg-gray-200 rounded w-12 mb-2 animate-pulse" />
               <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
               <div className="flex gap-2 mt-3">
-                {Array(3).fill(0).map((_, i) => (
-                  <div key={i} className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
-                ))}
+                {Array(3)
+                  .fill(0)
+                  .map((_, i) => (
+                    <div key={i} className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
+                  ))}
               </div>
             </div>
 

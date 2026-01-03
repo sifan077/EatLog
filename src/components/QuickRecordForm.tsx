@@ -18,7 +18,11 @@ export default function QuickRecordForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
-  const compressImage = (file: File, maxWidth: number = 1280, quality: number = 0.6): Promise<File> => {
+  const compressImage = (
+    file: File,
+    maxWidth: number = 1280,
+    quality: number = 0.6
+  ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -196,134 +200,80 @@ export default function QuickRecordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50">
-      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">
-        快速记录
-      </h3>
-
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50"
+    >
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">快速记录</h3>
       {/* Photo Upload */}
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          照片 <span className="text-red-500">*</span>
+        </label>
 
-              <div className="mb-6">
+        {/* Photo Previews */}
 
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {photoPreviews.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+            {photoPreviews.map((preview, index) => (
+              <div key={index} className="relative group">
+                <img
+                  src={preview}
+                  alt={`Preview ${index + 1}`}
+                  className="w-full h-32 sm:h-40 object-cover rounded-lg"
+                />
 
-                  照片 <span className="text-red-500">*</span>
-
-                </label>
-
-      
-
-                {/* Photo Previews */}
-
-                {photoPreviews.length > 0 && (
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-
-                    {photoPreviews.map((preview, index) => (
-
-                      <div key={index} className="relative group">
-
-                        <img
-
-                          src={preview}
-
-                          alt={`Preview ${index + 1}`}
-
-                          className="w-full h-32 sm:h-40 object-cover rounded-lg"
-
-                        />
-
-                        <button
-
-                          type="button"
-
-                          onClick={() => handleRemovePhoto(index)}
-
-                          disabled={loading}
-
-                          className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-
-                        >
-
-                          ×
-
-                        </button>
-
-                        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-
-                          {photos[index] && `${(photos[index].size / 1024).toFixed(1)} KB`}
-
-                        </div>
-
-                      </div>
-
-                    ))}
-
-                  </div>
-
-                )}
-
-      
-
-                {/* Upload Button */}
-
-                <div
-
-                  className={`border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 ${
-
-                    photoPreviews.length > 0
-
-                      ? 'border-teal-400 bg-teal-50'
-
-                      : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
-
-                  }`}
-
-                  onClick={() => fileInputRef.current?.click()}
-
+                <button
+                  type="button"
+                  onClick={() => handleRemovePhoto(index)}
+                  disabled={loading}
+                  className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
+                  ×
+                </button>
 
-                  <input
-
-                    ref={fileInputRef}
-
-                    type="file"
-
-                    accept="image/*"
-
-                    multiple
-
-                    onChange={handlePhotoChange}
-
-                    className="hidden"
-
-                    disabled={loading}
-
-                  />
-
-      
-
-                  <div>
-
-                    <div className="text-4xl sm:text-5xl mb-3">📸</div>
-
-                    <p className="text-gray-700 font-medium">
-
-                      {photoPreviews.length > 0 ? '继续添加照片' : '点击上传照片'}
-
-                    </p>
-
-                    <p className="text-sm text-gray-500 mt-1">
-
-                      支持 JPG、PNG、GIF、WebP，最大 10MB，可多选
-
-                    </p>
-
-                  </div>
-
+                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                  {photos[index] && `${(photos[index].size / 1024).toFixed(1)} KB`}
                 </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-              </div>      {/* Content */}
+        {/* Upload Button */}
+
+        <div
+          className={`border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 ${
+            photoPreviews.length > 0
+              ? 'border-teal-400 bg-teal-50'
+              : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
+          }`}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handlePhotoChange}
+            className="hidden"
+            disabled={loading}
+          />
+
+          <div>
+            <div className="text-4xl sm:text-5xl mb-3">📸</div>
+
+            <p className="text-gray-700 font-medium">
+              {photoPreviews.length > 0 ? '继续添加照片' : '点击上传照片'}
+            </p>
+
+            <p className="text-sm text-gray-500 mt-1">
+              支持 JPG、PNG、GIF、WebP，最大 10MB，可多选
+            </p>
+          </div>
+        </div>
+      </div>{' '}
+      {/* Content */}
       <div className="mb-6">
         <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
           描述
@@ -338,11 +288,8 @@ export default function QuickRecordForm() {
           placeholder="简单描述一下这顿饭..."
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 resize-none"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">
-          {content.length}/200
-        </div>
+        <div className="text-right text-xs text-gray-500 mt-1">{content.length}/200</div>
       </div>
-
       {/* Price */}
       <div className="mb-6">
         <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -364,35 +311,32 @@ export default function QuickRecordForm() {
             className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-          可选，默认为 0
-        </p>
+        <p className="text-xs text-gray-500 mt-1">可选，默认为 0</p>
       </div>
-
       {/* Meal Type */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  餐次 <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-                  {MEAL_TYPES.map((type) => (
-                    <button
-                      key={type.value}
-                      type="button"
-                      onClick={() => setMealType(type.value)}
-                      disabled={loading}
-                      className={`px-3 py-3 sm:px-4 sm:py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
-                        mealType === type.value
-                          ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      } disabled:cursor-not-allowed`}
-                    >
-                      <div className="text-lg sm:text-xl mb-1">{type.emoji}</div>
-                      <div className="text-xs">{type.label}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          餐次 <span className="text-red-500">*</span>
+        </label>
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
+          {MEAL_TYPES.map((type) => (
+            <button
+              key={type.value}
+              type="button"
+              onClick={() => setMealType(type.value)}
+              disabled={loading}
+              className={`px-3 py-3 sm:px-4 sm:py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
+                mealType === type.value
+                  ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              } disabled:cursor-not-allowed`}
+            >
+              <div className="text-lg sm:text-xl mb-1">{type.emoji}</div>
+              <div className="text-xs">{type.label}</div>
+            </button>
+          ))}
+        </div>
+      </div>
       {/* Error Message */}
       {error && (
         <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2">
@@ -400,7 +344,6 @@ export default function QuickRecordForm() {
           <span>{error}</span>
         </div>
       )}
-
       {/* Submit Button */}
       <button
         type="submit"

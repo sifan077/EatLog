@@ -17,16 +17,20 @@ export default function CalendarSkeleton() {
 
         {/* Day Names Skeleton */}
         <div className="grid grid-cols-7 gap-1 mb-2">
-          {Array(7).fill(0).map((_, i) => (
-            <div key={i} className="h-8 bg-gray-200 rounded animate-pulse" />
-          ))}
+          {Array(7)
+            .fill(0)
+            .map((_, i) => (
+              <div key={i} className="h-8 bg-gray-200 rounded animate-pulse" />
+            ))}
         </div>
 
         {/* Calendar Days Skeleton */}
         <div className="grid grid-cols-7 gap-1">
-          {Array(35).fill(0).map((_, i) => (
-            <div key={i} className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
-          ))}
+          {Array(35)
+            .fill(0)
+            .map((_, i) => (
+              <div key={i} className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
+            ))}
         </div>
       </div>
 
@@ -41,7 +45,10 @@ export default function CalendarSkeleton() {
         {/* Meal Card Skeletons */}
         <div className="space-y-4 sm:space-y-6">
           {[1, 2].map((i) => (
-            <div key={i} className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-white/50">
+            <div
+              key={i}
+              className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-white/50"
+            >
               <div className="flex flex-col sm:flex-row">
                 <div className="w-full h-48 sm:w-48 sm:h-48 flex-shrink-0 bg-gray-200 animate-pulse" />
                 <div className="flex-1 p-4 sm:p-6 space-y-3">

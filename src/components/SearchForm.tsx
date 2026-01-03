@@ -68,7 +68,10 @@ export default function SearchForm() {
             urlsMap.set(meal.id, photoUrls);
           } catch (err) {
             console.error('Error creating signed URLs:', err);
-            urlsMap.set(meal.id, meal.photo_paths.map(() => null));
+            urlsMap.set(
+              meal.id,
+              meal.photo_paths.map(() => null)
+            );
           }
         })
       );
@@ -92,7 +95,10 @@ export default function SearchForm() {
   return (
     <div className="space-y-6">
       {/* Search Input */}
-      <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50"
+      >
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <span className="text-gray-400 text-xl">🔍</span>
@@ -110,9 +116,7 @@ export default function SearchForm() {
             </div>
           )}
         </div>
-        <p className="text-xs text-gray-500 mt-2">
-          搜索描述、地点或标签内容
-        </p>
+        <p className="text-xs text-gray-500 mt-2">搜索描述、地点或标签内容</p>
       </form>
 
       {/* Error Message */}
@@ -127,12 +131,8 @@ export default function SearchForm() {
       {!query && (
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-12 text-center border border-white/50">
           <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-            搜索记录
-          </h3>
-          <p className="text-gray-600 text-sm sm:text-base">
-            输入关键词搜索你的饮食记录
-          </p>
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">搜索记录</h3>
+          <p className="text-gray-600 text-sm sm:text-base">输入关键词搜索你的饮食记录</p>
         </div>
       )}
 
@@ -140,12 +140,8 @@ export default function SearchForm() {
       {query && !loading && results.length === 0 && !error && (
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-12 text-center border border-white/50">
           <div className="text-6xl mb-4">📭</div>
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-            没有找到结果
-          </h3>
-          <p className="text-gray-600 text-sm sm:text-base">
-            试试其他关键词
-          </p>
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">没有找到结果</h3>
+          <p className="text-gray-600 text-sm sm:text-base">试试其他关键词</p>
         </div>
       )}
 
@@ -153,12 +149,8 @@ export default function SearchForm() {
       {results.length > 0 && (
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between px-2">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-              搜索结果
-            </h3>
-            <span className="text-sm text-gray-600">
-              {results.length} 条记录
-            </span>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">搜索结果</h3>
+            <span className="text-sm text-gray-600">{results.length} 条记录</span>
           </div>
           {results.map((meal) => (
             <MealCard
