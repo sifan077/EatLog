@@ -202,12 +202,12 @@ export default function QuickRecordForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50"
+      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50 dark:border-gray-800/50 transition-colors duration-300"
     >
-      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">快速记录</h3>
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">快速记录</h3>
       {/* Photo Upload */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           照片 <span className="text-red-500">*</span>
         </label>
 
@@ -245,8 +245,8 @@ export default function QuickRecordForm() {
         <div
           className={`border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 ${
             photoPreviews.length > 0
-              ? 'border-teal-400 bg-teal-50'
-              : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
+              ? 'border-teal-400 bg-teal-50 dark:bg-teal-900/20'
+              : 'border-gray-300 dark:border-gray-600 hover:border-teal-400 hover:bg-gray-50 dark:hover:bg-gray-800'
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
@@ -263,11 +263,11 @@ export default function QuickRecordForm() {
           <div>
             <div className="text-4xl sm:text-5xl mb-3">📸</div>
 
-            <p className="text-gray-700 font-medium">
+            <p className="text-gray-700 dark:text-gray-300 font-medium">
               {photoPreviews.length > 0 ? '继续添加照片' : '点击上传照片'}
             </p>
 
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               支持 JPG、PNG、GIF、WebP，最大 10MB，可多选
             </p>
           </div>
@@ -275,7 +275,7 @@ export default function QuickRecordForm() {
       </div>{' '}
       {/* Content */}
       <div className="mb-6">
-        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           描述
         </label>
         <textarea
@@ -286,18 +286,18 @@ export default function QuickRecordForm() {
           rows={2}
           maxLength={200}
           placeholder="简单描述一下这顿饭..."
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 resize-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">{content.length}/200</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{content.length}/200</div>
       </div>
       {/* Price */}
       <div className="mb-6">
-        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           价格
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <span className="text-gray-400 font-medium">¥</span>
+            <span className="text-gray-400 dark:text-gray-500 font-medium">¥</span>
           </div>
           <input
             id="price"
@@ -308,14 +308,14 @@ export default function QuickRecordForm() {
             min="0"
             step="0.01"
             placeholder="0.00"
-            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1">可选，默认为 0</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">可选，默认为 0</p>
       </div>
       {/* Meal Type */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           餐次 <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
@@ -328,7 +328,7 @@ export default function QuickRecordForm() {
               className={`px-3 py-3 sm:px-4 sm:py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                 mealType === type.value
                   ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               } disabled:cursor-not-allowed`}
             >
               <div className="text-lg sm:text-xl mb-1">{type.emoji}</div>

@@ -274,13 +274,13 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50"
+      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50 dark:border-gray-800/50 transition-colors duration-300"
     >
-      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">编辑记录</h3>
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">编辑记录</h3>
 
       {/* Photos Section */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">照片</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">照片</label>
 
         {/* Existing Photos */}
         {existingPhotoUrls.length > 0 && (
@@ -337,7 +337,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
 
         {/* Upload Button */}
         <div
-          className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-teal-400 hover:bg-gray-50 transition-all duration-200"
+          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer hover:border-teal-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
           onClick={() => fileInputRef.current?.click()}
         >
           <input
@@ -350,14 +350,14 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             disabled={loading}
           />
           <div className="text-4xl mb-2">📸</div>
-          <p className="text-gray-700 font-medium">添加更多照片</p>
-          <p className="text-sm text-gray-500 mt-1">支持 JPG、PNG、GIF、WebP，最大 10MB</p>
+          <p className="text-gray-700 dark:text-gray-300 font-medium">添加更多照片</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">支持 JPG、PNG、GIF、WebP，最大 10MB</p>
         </div>
       </div>
 
       {/* Content */}
       <div className="mb-6">
-        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           描述
         </label>
         <textarea
@@ -368,14 +368,14 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           rows={3}
           maxLength={200}
           placeholder="简单描述一下这顿饭..."
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 resize-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">{content.length}/200</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{content.length}/200</div>
       </div>
 
       {/* Meal Type */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">餐次</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">餐次</label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
           {MEAL_TYPES.map((type) => (
             <button
@@ -386,7 +386,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
               className={`px-3 py-3 sm:px-4 sm:py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                 mealType === type.value
                   ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               } disabled:cursor-not-allowed`}
             >
               <div className="text-lg sm:text-xl mb-1">{type.emoji}</div>
@@ -398,7 +398,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
 
       {/* Time */}
       <div className="mb-6">
-        <label htmlFor="eatenAt" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="eatenAt" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           进餐时间
         </label>
         <input
@@ -407,18 +407,18 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           value={eatenAt}
           onChange={(e) => setEatenAt(e.target.value)}
           disabled={loading}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
       </div>
 
       {/* Price */}
       <div className="mb-6">
-        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           价格
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <span className="text-gray-400 font-medium">¥</span>
+            <span className="text-gray-400 dark:text-gray-500 font-medium">¥</span>
           </div>
           <input
             id="price"
@@ -429,15 +429,15 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             min="0"
             step="0.01"
             placeholder="0.00"
-            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1">可选，默认为 0</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">可选，默认为 0</p>
       </div>
 
       {/* Location */}
       <div className="mb-6">
-        <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label htmlFor="location" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           地点
         </label>
         <input
@@ -448,14 +448,14 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           disabled={loading}
           maxLength={100}
           placeholder="例如：家里、公司、餐厅..."
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 mt-1">{location.length}/100</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{location.length}/100</div>
       </div>
 
       {/* Tags */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">标签</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">标签</label>
         <div className="relative">
           <input
             type="text"
@@ -469,10 +469,10 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
             disabled={loading || tags.length >= 10}
             placeholder="添加标签..."
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           />
           {showTagSuggestions && tagInput && filteredTagSuggestions.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
               {filteredTagSuggestions.map((tag) => (
                 <button
                   key={tag}
@@ -481,7 +481,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
                     handleAddTag(tag);
                     setShowTagSuggestions(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
                 >
                   {tag}
                 </button>
@@ -496,14 +496,14 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-3 py-1.5 bg-teal-50 text-teal-700 text-sm font-medium rounded-full"
+                className="inline-flex items-center px-3 py-1.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 text-sm font-medium rounded-full"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
                   disabled={loading}
-                  className="ml-2 text-teal-500 hover:text-teal-700 disabled:cursor-not-allowed"
+                  className="ml-2 text-teal-500 hover:text-teal-700 dark:hover:text-teal-300 disabled:cursor-not-allowed"
                 >
                   ×
                 </button>
@@ -511,7 +511,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
             ))}
           </div>
         )}
-        <div className="text-xs text-gray-500 mt-2">{tags.length}/10 个标签</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">{tags.length}/10 个标签</div>
       </div>
 
       {/* Error Message */}

@@ -25,11 +25,11 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
   return (
     <Link
       href={`/edit/${meal.id}`}
-      className="block bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-white/50 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.01]"
+      className="block bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-white/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.01]"
     >
       <div className="flex flex-col sm:flex-row">
         {/* Photo */}
-        <div className="w-full h-48 sm:w-48 sm:h-48 flex-none relative bg-gray-100 overflow-hidden">
+        <div className="w-full h-48 sm:w-48 sm:h-48 flex-none relative bg-gray-100 dark:bg-gray-800 overflow-hidden">
           {firstPhotoUrl && !imageErrors.has(0) ? (
             <img
               src={firstPhotoUrl}
@@ -38,12 +38,12 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
               onError={() => handleImageError(0)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-100 to-teal-100">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-100 dark:from-cyan-900/30 to-teal-100 dark:to-teal-900/30">
               <span className="text-6xl">🍽️</span>
             </div>
           )}
           {/* Meal Type Badge */}
-          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium shadow-md">
+          <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium shadow-md">
             <span className="mr-1">{mealType?.emoji}</span>
             {mealType?.label}
           </div>
@@ -58,16 +58,16 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
         {/* Content */}
         <div className="flex-1 p-4 sm:p-6">
           {/* Time */}
-          <div className="text-sm text-gray-500 mb-2">{formatTimeDisplay(meal.eaten_at)}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{formatTimeDisplay(meal.eaten_at)}</div>
 
           {/* Price */}
           {meal.price > 0 && (
-            <div className="text-lg font-semibold text-teal-600 mb-2">¥{meal.price.toFixed(2)}</div>
+            <div className="text-lg font-semibold text-teal-600 dark:text-teal-400 mb-2">¥{meal.price.toFixed(2)}</div>
           )}
 
           {/* Description */}
           {meal.content && (
-            <p className="text-gray-900 text-base sm:text-lg font-medium mb-3 line-clamp-2">
+            <p className="text-gray-900 dark:text-gray-100 text-base sm:text-lg font-medium mb-3 line-clamp-2">
               {meal.content}
             </p>
           )}
@@ -78,7 +78,7 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
               {meal.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full"
+                  className="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 text-xs font-medium rounded-full"
                 >
                   {tag}
                 </span>
@@ -88,14 +88,14 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
 
           {/* Location */}
           {meal.location && (
-            <div className="mt-3 text-sm text-gray-500 flex items-center gap-1">
+            <div className="mt-3 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
               <span>📍</span>
               <span>{meal.location}</span>
             </div>
           )}
 
           {/* Edit Hint */}
-          <div className="mt-3 sm:mt-4 text-xs text-gray-400">点击查看详情或编辑</div>
+          <div className="mt-3 sm:mt-4 text-xs text-gray-400 dark:text-gray-500">点击查看详情或编辑</div>
         </div>
       </div>
     </Link>

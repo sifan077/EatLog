@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -35,7 +36,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 px-4 py-8 sm:py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-8 sm:py-12 transition-colors duration-300">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8 sm:mb-10 animate-fade-in">
@@ -45,24 +46,29 @@ export default function LoginPage() {
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent mb-2">
             Eat Log
           </h1>
-          <p className="text-gray-600 text-base sm:text-lg">记录每一餐，享受生活</p>
+          <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">记录每一餐，享受生活</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/50">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6 sm:mb-8 text-center">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/50 dark:border-gray-800/50 transition-colors duration-300 relative">
+          {/* Theme Toggle Button */}
+          <div className="absolute top-4 right-4">
+            <ThemeToggle />
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 sm:mb-8 text-center">
             欢迎回来
           </h2>
 
           <form onSubmit={handleLogin} className="space-y-5 sm:space-y-6">
             {/* Email Input */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 邮箱地址
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="text-gray-400">📧</span>
+                  <span className="text-gray-400 dark:text-gray-500">📧</span>
                 </div>
                 <input
                   id="email"
@@ -71,7 +77,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={loading}
-                  className="w-full pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                  className="w-full pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   placeholder="your@email.com"
                 />
               </div>
@@ -79,12 +85,12 @@ export default function LoginPage() {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 密码
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="text-gray-400">🔒</span>
+                  <span className="text-gray-400 dark:text-gray-500">🔒</span>
                 </div>
                 <input
                   id="password"
@@ -93,7 +99,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
-                  className="w-full pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                  className="w-full pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   placeholder="••••••••"
                 />
               </div>
@@ -101,7 +107,7 @@ export default function LoginPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-shake">
+              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-shake">
                 <span>⚠️</span>
                 <span>{error}</span>
               </div>
@@ -126,7 +132,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-xs sm:text-sm text-gray-500">
+        <p className="mt-8 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           © 2026 Eat Log. 用心记录每一餐
         </p>
       </div>

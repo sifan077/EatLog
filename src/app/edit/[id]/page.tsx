@@ -85,23 +85,23 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 pt-4">
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-4 transition-colors duration-300">
         {/* Page Header */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
           <Link
             href="/today"
-            className="inline-flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             <span className="text-2xl">←</span>
             <span className="font-medium">返回今日记录</span>
           </Link>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-4">编辑记录</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-4">编辑记录</h2>
         </div>
 
         {/* Main Content */}
         <main className="max-w-4xl mx-auto px-4 pb-8 sm:px-6 sm:pb-12">
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
               <span>⚠️</span>
               <span>{error}</span>
             </div>

@@ -92,16 +92,16 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
   return (
     <div className="space-y-6">
       {/* Calendar Grid */}
-      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50">
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50 dark:border-gray-800/50 transition-colors duration-300">
         {/* Calendar Header */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={goToPreviousMonth}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Previous month"
           >
             <svg
-              className="w-5 h-5 text-gray-700"
+              className="w-5 h-5 text-gray-700 dark:text-gray-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,18 +116,18 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {currentDate.getFullYear()}年 {monthNames[currentDate.getMonth()]}
             </h2>
           </div>
 
           <button
             onClick={goToNextMonth}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Next month"
           >
             <svg
-              className="w-5 h-5 text-gray-700"
+              className="w-5 h-5 text-gray-700 dark:text-gray-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -152,7 +152,7 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
           {dayNames.map((day) => (
             <div
               key={day}
-              className="text-center text-xs sm:text-sm font-medium text-gray-500 py-2"
+              className="text-center text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 py-2"
             >
               {day}
             </div>
@@ -178,15 +178,15 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
                   selected
                     ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg scale-105'
                     : today
-                      ? 'bg-cyan-100 text-cyan-700 font-semibold'
-                      : 'hover:bg-gray-100 text-gray-700'
+                      ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 font-semibold'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <span className="text-sm sm:text-base">{date.getDate()}</span>
                 {hasLogs && (
                   <div
                     className={`absolute bottom-1 w-1.5 h-1.5 rounded-full ${
-                      selected ? 'bg-white' : 'bg-teal-500'
+                      selected ? 'bg-white' : 'bg-teal-500 dark:bg-teal-400'
                     }`}
                   />
                 )}
@@ -198,18 +198,18 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
 
       {/* Selected Date Meal Logs */}
       {selectedDate && (
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 border border-white/50 dark:border-gray-800/50 transition-colors duration-300">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
               {formatDateDisplay(selectedDate)}
             </h3>
-            <span className="text-sm text-gray-600">{selectedMealLogs.length} 条记录</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{selectedMealLogs.length} 条记录</span>
           </div>
 
           {selectedMealLogs.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
               <div className="text-4xl sm:text-5xl mb-3">🍽️</div>
-              <p className="text-gray-600 text-sm sm:text-base">这一天没有记录</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">这一天没有记录</p>
             </div>
           ) : (
             <div className="space-y-4 sm:space-y-6">
