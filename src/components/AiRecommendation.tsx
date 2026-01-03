@@ -77,10 +77,7 @@ export default function AiRecommendation() {
       }
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '生成推荐失败，请重试';
+      const errorMessage = error instanceof Error ? error.message : '生成推荐失败，请重试';
       setRecommendation(`❌ ${errorMessage}`);
     } finally {
       setIsGenerating(false);

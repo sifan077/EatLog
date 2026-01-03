@@ -88,20 +88,20 @@ export async function POST(request: NextRequest) {
 
             // 按行分割
             const lines = buffer.split('\n');
-            
+
             // 保留最后一行（可能不完整）
             buffer = lines.pop() || '';
 
             for (const line of lines) {
               const trimmedLine = line.trim();
-              
+
               // 跳过空行
               if (!trimmedLine) continue;
-              
+
               // 检查是否是SSE数据行
               if (trimmedLine.startsWith('data: ')) {
                 const data = trimmedLine.slice(6).trim();
-                
+
                 // 检查是否是结束标记
                 if (data === '[DONE]') {
                   controller.close();
@@ -145,17 +145,19 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in AI recommendation API:', error);
-    
+
     // 如果是超时错误，返回特殊消息
-    const isTimeout = error instanceof Error && 
-      (error.name === 'AbortError' || error.message.includes('timeout'));
-    
+    const isTimeout =
+      error instanceof Error && (error.name === 'AbortError' || error.message.includes('timeout'));
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: isTimeout 
-          ? '请求超时，请重试' 
-          : error instanceof Error ? error.message : 'Unknown error',
+        error: isTimeout
+          ? '请求超时，请重试'
+          : error instanceof Error
+            ? error.message
+            : 'Unknown error',
       }),
       {
         status: 500,
