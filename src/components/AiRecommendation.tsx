@@ -27,10 +27,20 @@ export default function AiRecommendation() {
         body: JSON.stringify({
           mealType: selectedMealType,
         }),
+        // 添加超时控制
+        signal: AbortSignal.timeout(60000), // 60秒超时
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate recommendation');
+        // 尝试读取错误信息
+        let errorMessage = '生成推荐失败，请重试';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // 如果无法解析JSON，使用默认错误消息
+        }
+        throw new Error(errorMessage);
       }
 
       // 检查是否是流式响应
@@ -44,12 +54,21 @@ export default function AiRecommendation() {
           throw new Error('无法读取响应流');
         }
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          const chunk = decoder.decode(value);
-          setRecommendation((prev) => prev + chunk);
+            const chunk = decoder.decode(value, { stream: true });
+            setRecommendation((prev) => prev + chunk);
+          }
+        } catch (readError) {
+          // 如果读取过程中出错，但已经有部分内容，保留已获取的内容
+          if (readError instanceof Error && readError.name === 'AbortError') {
+            setRecommendation((prev) => prev + '\n\n[连接中断，已获取部分内容]');
+          } else {
+            throw readError;
+          }
         }
       } else {
         // 普通JSON响应（错误情况）
@@ -58,7 +77,11 @@ export default function AiRecommendation() {
       }
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      setRecommendation('生成推荐失败，请重试');
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '生成推荐失败，请重试';
+      setRecommendation(`❌ ${errorMessage}`);
     } finally {
       setIsGenerating(false);
     }

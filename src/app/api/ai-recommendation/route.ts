@@ -2,7 +2,15 @@ import { NextRequest } from 'next/server';
 import { getAiRecommendationData } from '../../actions';
 import { buildMealRecommendationPrompt } from '@/utils/ai-prompt';
 
+// 强制使用动态路由，避免Vercel的静态优化
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+export const maxDuration = 60; // Vercel Pro支持60秒，免费版10秒
+
 export async function POST(request: NextRequest) {
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
   try {
     const body = await request.json();
     const { mealType } = body;
@@ -41,6 +49,8 @@ export async function POST(request: NextRequest) {
         max_tokens: 2000,
         stream: true, // 启用流式响应
       }),
+      // 添加超时配置
+      signal: AbortSignal.timeout(55000), // 55秒超时，留一些余量
     });
 
     if (!response.ok) {
@@ -55,9 +65,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 创建流式响应
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -66,21 +73,43 @@ export async function POST(request: NextRequest) {
             throw new Error('无法读取响应流');
           }
 
+          let buffer = ''; // 缓冲区用于处理分片数据
+
           while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+              controller.close();
+              break;
+            }
 
             // 解析SSE格式的数据
-            const chunk = decoder.decode(value);
-            const lines = chunk.split('\n');
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+
+            // 按行分割
+            const lines = buffer.split('\n');
+            
+            // 保留最后一行（可能不完整）
+            buffer = lines.pop() || '';
 
             for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6);
+              const trimmedLine = line.trim();
+              
+              // 跳过空行
+              if (!trimmedLine) continue;
+              
+              // 检查是否是SSE数据行
+              if (trimmedLine.startsWith('data: ')) {
+                const data = trimmedLine.slice(6).trim();
+                
+                // 检查是否是结束标记
                 if (data === '[DONE]') {
                   controller.close();
                   return;
                 }
+
+                // 跳过空数据
+                if (!data) continue;
 
                 try {
                   const parsed = JSON.parse(data);
@@ -89,7 +118,11 @@ export async function POST(request: NextRequest) {
                     controller.enqueue(encoder.encode(content));
                   }
                 } catch (e) {
-                  console.error('解析SSE数据失败:', e);
+                  // JSON解析失败，记录错误但继续处理
+                  console.error('解析SSE数据失败:', {
+                    error: e instanceof Error ? e.message : e,
+                    data: data.substring(0, 100), // 只记录前100字符
+                  });
                 }
               }
             }
@@ -105,16 +138,24 @@ export async function POST(request: NextRequest) {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Transfer-Encoding': 'chunked',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-transform',
+        'X-Accel-Buffering': 'no', // 禁用nginx缓冲
         Connection: 'keep-alive',
       },
     });
   } catch (error) {
     console.error('Error in AI recommendation API:', error);
+    
+    // 如果是超时错误，返回特殊消息
+    const isTimeout = error instanceof Error && 
+      (error.name === 'AbortError' || error.message.includes('timeout'));
+    
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: isTimeout 
+          ? '请求超时，请重试' 
+          : error instanceof Error ? error.message : 'Unknown error',
       }),
       {
         status: 500,
