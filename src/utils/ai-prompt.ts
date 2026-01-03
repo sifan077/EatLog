@@ -1,0 +1,357 @@
+import { MealLog, UserProfile } from '@/lib/types';
+import { MEAL_TYPES } from '@/lib/constants';
+
+/**
+ * 构建AI饮食指导的提示词
+ * @param userProfile 用户档案
+ * @param recentMeals 最近7天的饮食记录
+ * @param currentMeal 当前要记录的饮食（可选，用于实时指导）
+ * @returns 结构化的AI提示词
+ */
+export function buildDietGuidancePrompt(
+  userProfile: UserProfile,
+  recentMeals: MealLog[],
+  currentMeal?: MealLog
+): string {
+  // 1. 用户基本信息部分
+  const userSection = buildUserProfileSection(userProfile);
+
+  // 2. 前7天饮食记录部分
+  const recentMealsSection = buildRecentMealsSection(recentMeals);
+
+  // 3. 当前饮食部分（如果有）
+  const currentMealSection = currentMeal ? buildCurrentMealSection(currentMeal) : '';
+
+  // 4. 分析请求部分
+  const requestSection = buildRequestSection(!!currentMeal);
+
+  return `${userSection}
+
+${recentMealsSection}
+
+${currentMealSection}
+
+${requestSection}`;
+}
+
+/**
+ * 构建用户档案部分
+ */
+function buildUserProfileSection(profile: UserProfile): string {
+  const lines = [
+    '## 用户档案信息',
+    '',
+    `姓名: ${profile.display_name || '未设置'}`,
+    `身高: ${profile.height ? `${profile.height} cm` : '未设置'}`,
+    `体重: ${profile.weight ? `${profile.weight} kg` : '未设置'}`,
+    `活动水平: ${getActivityLevelLabel(profile.activity_level)}`,
+    `每日卡路里目标: ${profile.daily_calorie_target ? `${profile.daily_calorie_target} kcal` : '未设置'}`,
+    '',
+    '### 饮食目标',
+    profile.diet_goals && profile.diet_goals.length > 0
+      ? profile.diet_goals.map(goal => `- ${goal}`).join('\n')
+      : '- 未设置',
+    '',
+    '### 饮食限制',
+    profile.dietary_restrictions && profile.dietary_restrictions.length > 0
+      ? profile.dietary_restrictions.map(restriction => `- ${restriction}`).join('\n')
+      : '- 无',
+    '',
+    '### 过敏原',
+    profile.allergies && profile.allergies.length > 0
+      ? profile.allergies.map(allergy => `- ${allergy}`).join('\n')
+      : '- 无',
+  ];
+
+  return lines.join('\n');
+}
+
+/**
+ * 构建最近7天饮食记录部分
+ */
+function buildRecentMealsSection(meals: MealLog[]): string {
+  if (meals.length === 0) {
+    return '## 最近7天饮食记录\n\n暂无记录';
+  }
+
+  // 按日期分组
+  const mealsByDate = groupMealsByDate(meals);
+
+  const lines = ['## 最近7天饮食记录', ''];
+
+  Object.entries(mealsByDate).forEach(([date, dayMeals]) => {
+    lines.push(`### ${date}`);
+    lines.push('');
+
+    dayMeals.forEach(meal => {
+      const mealType = MEAL_TYPES.find(mt => mt.value === meal.meal_type);
+      const time = new Date(meal.eaten_at).toLocaleTimeString('zh-CN', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      lines.push(`**${mealType?.label || meal.meal_type}** ${time}`);
+      lines.push(`- 描述: ${meal.content || '无'}`);
+      lines.push('');
+    });
+  });
+
+  return lines.join('\n');
+}
+
+/**
+ * 构建当前饮食部分
+ */
+function buildCurrentMealSection(meal: MealLog): string {
+  const mealType = MEAL_TYPES.find(mt => mt.value === meal.meal_type);
+  const time = new Date(meal.eaten_at).toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const lines = [
+    '## 当前饮食记录',
+    '',
+    `**${mealType?.label || meal.meal_type}** ${time}`,
+    `- 描述: ${meal.content || '无'}`,
+  ];
+
+  return lines.join('\n');
+}
+
+/**
+ * 构建分析请求部分
+ */
+function buildRequestSection(hasCurrentMeal: boolean): string {
+  const lines = [
+    '## 分析请求',
+    '',
+    '你是一位专业的营养师，擅长制定科学、健康的减脂饮食计划。',
+    '',
+    '请根据我的饮食历史、热量摄入趋势、营养均衡情况以及减脂目标，',
+    '为我推荐下一顿（即**今天下一餐**）的具体菜品。',
+    '',
+    '## 输出要求',
+    '',
+    '请用清晰、简洁的中文回复，先简要分析我的近期饮食情况，再给出具体的一餐推荐。',
+    '',
+    '### 第一部分：近期饮食分析',
+    '- 分析我过去7天的饮食模式和习惯',
+    '- 估算我的每日热量摄入趋势',
+    '- 评估营养均衡情况（蛋白质、碳水、脂肪比例）',
+    '- 指出近期饮食的优缺点',
+    '- 如果发现明显的营养失衡（如蛋白质不足、碳水过低等），请明确指出',
+    '',
+    '### 第二部分：下一餐推荐',
+    '',
+    '推荐要求：',
+    '- **热量控制**：根据我的减脂目标，估算合理的热量范围并据此分配',
+    '- **营养比例**：明确主食、蛋白质、蔬菜的比例建议（如碳水:蛋白质:蔬菜 = 4:3:3）',
+    '- **食材选择**：使用常见的、容易购买的食材',
+    '- **适合场景**：适合外卖或简单搭配，不需要复杂烹饪',
+    '- **避免食物**：避免高糖、高油、深加工食品',
+    '- **符合目标**：考虑我的饮食目标和饮食限制',
+    '',
+    '推荐格式：',
+    '```\n**推荐菜品**：xxx\n\n**主要食材**：\n- 主食：xxx\n- 蛋白质：xxx\n- 蔬菜：xxx\n\n**营养价值**：约 xxx kcal\n\n**营养亮点**：xxx\n```',
+    '',
+    '### 第三部分：额外建议',
+    '- 提供2-3条实用的饮食改进建议',
+    '- 提醒需要注意的事项或风险',
+    '',
+    '## 注意事项',
+    '- 如果信息不足（如缺少身高体重数据），请明确指出需要补充的信息',
+    '- 建议要具体、实用，避免空泛',
+    '- 充分考虑我的个人情况和偏好',
+    '- 输出格式使用Markdown，便于阅读'
+  ];
+
+  return lines.join('\n');
+}
+
+/**
+ * 将饮食记录按日期分组
+ */
+function groupMealsByDate(meals: MealLog[]): Record<string, MealLog[]> {
+  const grouped: Record<string, MealLog[]> = {};
+
+  meals.forEach(meal => {
+    const date = new Date(meal.eaten_at).toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    if (!grouped[date]) {
+      grouped[date] = [];
+    }
+
+    grouped[date].push(meal);
+  });
+
+  return grouped;
+}
+
+/**
+ * 获取活动水平的中文标签
+ */
+function getActivityLevelLabel(level: string | null): string {
+  const labels: Record<string, string> = {
+    sedentary: '久坐不动（几乎不运动）',
+    light: '轻度活动（每周运动 1-3 天）',
+    moderate: '中度活动（每周运动 3-5 天）',
+    active: '高度活动（每周运动 6-7 天）',
+    very_active: '非常活跃（每天运动或体力劳动）',
+  };
+
+  return labels[level || ''] || '未设置';
+}
+
+/**
+ * 构建简化的提示词（用于快速食谱推荐）
+ */
+export function buildQuickDietPrompt(
+  userProfile: UserProfile,
+  recentMeals: MealLog[],
+  nextMealType?: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack'
+): string {
+  const summary = buildDietSummary(userProfile, recentMeals);
+  const mealLabel = nextMealType ? MEAL_TYPES.find(mt => mt.value === nextMealType)?.label : '下一餐';
+
+  return `作为一位专业的营养师，请基于以下信息为用户推荐${mealLabel}：
+
+${summary}
+
+请提供：
+1. 简要分析近期饮食情况（1-2句话）
+2. 推荐一道具体的菜品（包括菜名、主要食材）
+3. 营养价值和热量估算
+
+要求：
+- 食材常见、适合外卖或简单搭配
+- 符合减脂目标
+- 避免高糖、高油、深加工食品
+- 每部分不超过100字`;
+}
+
+/**
+ * 构建饮食摘要
+ */
+function buildDietSummary(profile: UserProfile, meals: MealLog[]): string {
+  const mealCount = meals.length;
+
+  const lines = [
+    `用户: ${profile.display_name || '未设置'}`,
+    `目标: ${profile.diet_goals?.join(', ') || '未设置'}`,
+    `活动水平: ${getActivityLevelLabel(profile.activity_level)}`,
+    `最近7天记录: ${mealCount} 餐`,
+  ];
+
+  return lines.join('\n');
+}
+
+/**
+ * 获取出现频率最高的标签
+ */
+function getTopTags(tags: string[], limit: number): string[] {
+  const counts: Record<string, number> = {};
+
+  tags.forEach(tag => {
+    counts[tag] = (counts[tag] || 0) + 1;
+  });
+
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([tag]) => tag);
+}
+
+/**
+ * 构建食谱推荐提示词（专注于具体食谱推荐）
+ * @param userProfile 用户档案
+ * @param recentMeals 最近7天的饮食记录
+ * @param nextMealType 下一餐的餐次类型（如 'lunch', 'dinner'）
+ * @returns 结构化的食谱推荐提示词
+ */
+export function buildMealRecommendationPrompt(
+  userProfile: UserProfile,
+  recentMeals: MealLog[],
+  nextMealType: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack'
+): string {
+  const userSection = buildUserProfileSection(userProfile);
+  const recentMealsSection = buildRecentMealsSection(recentMeals);
+  const nextMealLabel = MEAL_TYPES.find(mt => mt.value === nextMealType)?.label || nextMealType;
+
+  const requestSection = `
+## 食谱推荐请求
+
+你是一位专业的营养师，擅长制定科学、健康的减脂饮食计划。
+
+请根据我的饮食历史、热量摄入趋势、营养均衡情况以及减脂目标，
+为我推荐**今天${nextMealLabel}**的具体食谱。
+
+## 推荐要求
+
+### 热量控制
+- 根据我的减脂目标，估算合理的热量范围
+- 考虑我今日已摄入的热量（如果有）
+- 明确标注这餐的推荐热量范围
+
+### 营养比例
+- 明确主食、蛋白质、蔬菜的比例建议
+- 确保营养均衡，符合减脂需求
+- 考虑我近期饮食的营养状况，适当调整
+
+### 食材选择
+- 使用常见的、容易购买的食材
+- 考虑我的饮食限制和过敏原
+- 避免高糖、高油、深加工食品
+- 推荐适合外卖或简单搭配的菜品
+
+## 输出格式
+
+请按以下格式输出：
+
+### 第一部分：近期饮食分析
+简要分析我过去7天的饮食情况，包括：
+- 热量摄入趋势
+- 营养均衡状况
+- 存在的问题和改进方向
+
+### 第二部分：${nextMealLabel}推荐
+
+\`\`\`
+**推荐菜品**：xxx
+
+**主要食材**：
+- 主食：xxx
+- 蛋白质：xxx
+- 蔬菜：xxx
+- 其他：xxx（可选）
+
+**营养组成**：
+- 热量：约 xxx kcal
+- 蛋白质：约 xx 克
+- 碳水化合物：约 xx 克
+- 脂肪：约 xx 克
+
+**营养亮点**：xxx
+\`\`\`
+
+### 第三部分：额外建议
+- 2-3条实用的饮食建议
+- 注意事项或风险提示
+
+## 注意事项
+- 如果信息不足，请明确指出需要补充的信息
+- 建议要具体、实用，避免空泛
+- 充分考虑我的个人情况和偏好
+- 使用Markdown格式输出
+`;
+
+  return `${userSection}
+
+${recentMealsSection}
+
+${requestSection}`;
+}

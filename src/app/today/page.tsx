@@ -1,10 +1,9 @@
-import { getTodayMealLogs, getNutritionAnalysis } from '../actions';
+import { getTodayMealLogs } from '../actions';
 import { createClient } from '@/utils/supabase/server';
 import { formatDateDisplay } from '@/utils/date';
 import MealCard from '@/components/MealCard';
 import QuickRecordForm from '@/components/QuickRecordForm';
 import DashboardLayout from '@/components/DashboardLayout';
-import NutritionCard from '@/components/NutritionCard';
 import { MealLog } from '@/lib/types';
 
 export default async function TodayPage() {
@@ -20,23 +19,6 @@ export default async function TodayPage() {
     mealLogs = await getTodayMealLogs();
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to fetch meal logs';
-  }
-
-  // Get nutrition analysis
-  let nutritionAnalysis;
-  try {
-    nutritionAnalysis = await getNutritionAnalysis();
-  } catch (err) {
-    console.error('Failed to get nutrition analysis:', err);
-    nutritionAnalysis = {
-      totalCalories: 0,
-      totalProtein: 0,
-      totalCarbs: 0,
-      totalFat: 0,
-      averageCaloriesPerMeal: 0,
-      mealCount: 0,
-      recommendations: [],
-    };
   }
 
   // Get signed URLs for all photos with error handling
@@ -100,11 +82,6 @@ export default async function TodayPage() {
           {/* Quick Record Form */}
           <section className="mb-8 sm:mb-10">
             <QuickRecordForm />
-          </section>
-
-          {/* Nutrition Analysis */}
-          <section className="mb-8 sm:mb-10">
-            <NutritionCard analysis={nutritionAnalysis} />
           </section>
 
           {/* Today's Meals */}

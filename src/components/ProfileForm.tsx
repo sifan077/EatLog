@@ -292,12 +292,11 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
               type="number"
               value={formData.daily_calorie_target || ''}
               onChange={(e) =>
-                handleInputChange('daily_calorie_target', parseInt(e.target.value) || undefined)
+                handleInputChange('daily_calorie_target', e.target.value ? parseFloat(e.target.value) : undefined)
               }
               disabled={loading || !isEditing}
               min="1000"
               max="5000"
-              step="10"
               placeholder="例如：2000"
               className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />

@@ -353,3 +353,39 @@ export async function getNutritionAnalysis(): Promise<NutritionAnalysis> {
   // Analyze nutrition
   return analyzeNutrition(mealLogs || [], profile);
 }
+
+// ============================================
+// AI Recommendation Actions
+// ============================================
+
+// Get data for AI recommendation prompt
+export async function getAiRecommendationData() {
+  const supabase = await createClient();
+
+  // Get user profile
+  const profile = await getUserProfile();
+
+  if (!profile) {
+    throw new Error('未登录，请重新登录');
+  }
+
+  // Get meal logs from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const { data: mealLogs, error: mealsError } = await supabase
+    .from('meal_logs')
+    .select('*')
+    .gte('eaten_at', sevenDaysAgo.toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (mealsError) {
+    console.error('Supabase error:', mealsError);
+    throw new Error(`Failed to fetch meal logs: ${mealsError.message} (Code: ${mealsError.code})`);
+  }
+
+  return {
+    profile,
+    recentMeals: mealLogs || [],
+  };
+}
