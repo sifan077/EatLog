@@ -52,14 +52,14 @@ function buildUserProfileSection(profile: UserProfile): string {
       ? profile.diet_goals.map((goal) => `- ${goal}`).join('\n')
       : '- 未设置',
     '',
-    '### 饮食限制',
+    '### 饮食限制（重要：推荐时必须严格遵守）',
     profile.dietary_restrictions && profile.dietary_restrictions.length > 0
-      ? profile.dietary_restrictions.map((restriction) => `- ${restriction}`).join('\n')
+      ? profile.dietary_restrictions.map((restriction) => `- ${restriction}（绝对不能包含相关食材）`).join('\n')
       : '- 无',
     '',
-    '### 过敏原',
+    '### 过敏原（重要：推荐时必须完全避免）',
     profile.allergies && profile.allergies.length > 0
-      ? profile.allergies.map((allergy) => `- ${allergy}`).join('\n')
+      ? profile.allergies.map((allergy) => `- ${allergy}（绝对不能包含此类食物）`).join('\n')
       : '- 无',
   ];
 
@@ -70,14 +70,25 @@ function buildUserProfileSection(profile: UserProfile): string {
  * 构建最近7天饮食记录部分
  */
 function buildRecentMealsSection(meals: MealLog[]): string {
+  // 计算实际有多少天的数据
+  const uniqueDates = new Set(
+    meals.map((meal) => new Date(meal.eaten_at).toLocaleDateString('zh-CN'))
+  );
+  const daysCount = uniqueDates.size;
+
   if (meals.length === 0) {
-    return '## 最近7天饮食记录\n\n暂无记录';
+    return '## 饮食记录\n\n暂无记录，请先记录一些饮食数据以便AI提供更准确的建议。';
   }
 
   // 按日期分组
   const mealsByDate = groupMealsByDate(meals);
 
-  const lines = ['## 最近7天饮食记录', ''];
+  const lines = [
+    `## 饮食记录`,
+    '',
+    `*注：目前有 ${daysCount} 天的饮食记录，共 ${meals.length} 餐。建议记录更多天数的饮食数据以获得更准确的个性化建议。*`,
+    '',
+  ];
 
   Object.entries(mealsByDate).forEach(([date, dayMeals]) => {
     lines.push(`### ${date}`);
@@ -136,11 +147,12 @@ function buildRequestSection(hasCurrentMeal: boolean): string {
     '请用清晰、简洁的中文回复，先简要分析我的近期饮食情况，再给出具体的一餐推荐。',
     '',
     '### 第一部分：近期饮食分析',
-    '- 分析我过去7天的饮食模式和习惯',
-    '- 估算我的每日热量摄入趋势',
+    '- 分析我的饮食记录，注意如果数据不足7天，请基于现有信息给出分析',
+    '- 如果有足够数据，估算每日热量摄入趋势',
     '- 评估营养均衡情况（蛋白质、碳水、脂肪比例）',
-    '- 指出近期饮食的优缺点',
+    '- 指出饮食的优缺点',
     '- 如果发现明显的营养失衡（如蛋白质不足、碳水过低等），请明确指出',
+    '- 如果数据不足，请说明并基于用户档案信息给出一般性建议',
     '',
     '### 第二部分：下一餐推荐',
     '',
@@ -150,6 +162,8 @@ function buildRequestSection(hasCurrentMeal: boolean): string {
     '- **食材选择**：使用常见的、容易购买的食材',
     '- **适合场景**：适合外卖或简单搭配，不需要复杂烹饪',
     '- **避免食物**：避免高糖、高油、深加工食品',
+    '- **严格遵守限制**：绝对不要推荐包含用户饮食限制中的食材（如素食、无麸质等）',
+    '- **完全避免过敏原**：绝对不要推荐包含用户过敏原的任何食物',
     '- **符合目标**：考虑我的饮食目标和饮食限制',
     '',
     '推荐格式：',
@@ -158,9 +172,10 @@ function buildRequestSection(hasCurrentMeal: boolean): string {
     '### 第三部分：额外建议',
     '- 提供2-3条实用的饮食改进建议',
     '- 提醒需要注意的事项或风险',
+    '- 如果数据不足，建议用户继续记录更多饮食数据',
     '',
     '## 注意事项',
-    '- 如果信息不足（如缺少身高体重数据），请明确指出需要补充的信息',
+    '- 如果信息不足（如缺少身高体重数据或饮食记录太少），请明确指出',
     '- 建议要具体、实用，避免空泛',
     '- 充分考虑我的个人情况和偏好',
     '- 输出格式使用Markdown，便于阅读',
@@ -241,12 +256,17 @@ ${summary}
  */
 function buildDietSummary(profile: UserProfile, meals: MealLog[]): string {
   const mealCount = meals.length;
+  const uniqueDates = new Set(
+    meals.map((meal) => new Date(meal.eaten_at).toLocaleDateString('zh-CN'))
+  );
+  const daysCount = uniqueDates.size;
 
   const lines = [
     `用户: ${profile.display_name || '未设置'}`,
     `目标: ${profile.diet_goals?.join(', ') || '未设置'}`,
     `活动水平: ${getActivityLevelLabel(profile.activity_level)}`,
-    `最近7天记录: ${mealCount} 餐`,
+    `记录天数: ${daysCount} 天`,
+    `总记录数: ${mealCount} 餐`,
   ];
 
   return lines.join('\n');
@@ -309,20 +329,21 @@ export function buildMealRecommendationPrompt(
 - 考虑我的饮食限制和过敏原
 - 避免高糖、高油、深加工食品
 - 推荐适合外卖或简单搭配的菜品
+- 推荐学校食堂能吃到的
 
 ## 输出格式
 
 请按以下格式输出：
 
 ### 第一部分：近期饮食分析
-简要分析我过去7天的饮食情况，包括：
+简要分析我过去7天的饮食情况，如果不足7天就是我还没有记录够，包括：
 - 热量摄入趋势
 - 营养均衡状况
 - 存在的问题和改进方向
 
 ### 第二部分：${nextMealLabel}推荐
 
-\`\`\`
+
 **推荐菜品**：xxx
 
 **主要食材**：
@@ -338,7 +359,6 @@ export function buildMealRecommendationPrompt(
 - 脂肪：约 xx 克
 
 **营养亮点**：xxx
-\`\`\`
 
 ### 第三部分：额外建议
 - 2-3条实用的饮食建议
@@ -347,7 +367,7 @@ export function buildMealRecommendationPrompt(
 ## 注意事项
 - 如果信息不足，请明确指出需要补充的信息
 - 建议要具体、实用，避免空泛
-- 充分考虑我的个人情况和偏好
+- 充分考虑我的个人情况和偏好，不要出现我不吃的
 - 使用Markdown格式输出
 `;
 

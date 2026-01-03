@@ -118,3 +118,206 @@ body {
 .animate-shake {
   animation: shake 0.5s ease-in-out;
 }
+
+/* Custom Markdown Styles */
+.prose {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.prose h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: rgb(17 24 39);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose h2 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  color: rgb(17 24 39);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose h3 {
+  font-size: 1.125em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: rgb(17 24 39);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose p {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  padding-left: 1.5em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+  padding: 0.125em 0.25em;
+  background-color: rgb(243 244 246);
+  border-radius: 0.25rem;
+  color: rgb(219 39 119);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.prose pre {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 1em;
+  background-color: rgb(243 244 246);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose pre code {
+  padding: 0;
+  background-color: transparent;
+  color: inherit;
+  white-space: pre-wrap;
+}
+
+.prose blockquote {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1em;
+  border-left: 4px solid rgb(8 145 178);
+  font-style: italic;
+  color: rgb(107 114 128);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose hr {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  border: 0;
+  border-top: 1px solid rgb(229 231 235);
+}
+
+.prose a {
+  color: rgb(8 145 178);
+  text-decoration: underline;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose a:hover {
+  color: rgb(6 182 212);
+}
+
+.prose table {
+  width: 100%;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-collapse: collapse;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose th,
+.prose td {
+  padding: 0.5em;
+  border: 1px solid rgb(229 231 235);
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.prose th {
+  background-color: rgb(243 244 246);
+  font-weight: 600;
+}
+
+/* Dark mode styles */
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3 {
+  color: rgb(229 231 235);
+}
+
+.dark .prose code {
+  background-color: rgb(38 38 38);
+  color: rgb(244 114 182);
+}
+
+.dark .prose pre {
+  background-color: rgb(38 38 38);
+}
+
+.dark .prose pre code {
+  color: inherit;
+}
+
+.dark .prose blockquote {
+  color: rgb(163 163 163);
+}
+
+.dark .prose hr {
+  border-top-color: rgb(38 38 38);
+}
+
+.dark .prose a {
+  color: rgb(6 182 212);
+}
+
+.dark .prose a:hover {
+  color: rgb(34 211 238);
+}
+
+.dark .prose th {
+  background-color: rgb(38 38 38);
+}
+
+.dark .prose th,
+.dark .prose td {
+  border-color: rgb(38 38 38);
+}

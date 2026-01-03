@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { MEAL_TYPES } from '@/lib/constants';
 
 type MealType = 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack';
@@ -9,19 +12,10 @@ export default function AiRecommendation() {
   const [selectedMealType, setSelectedMealType] = useState<MealType>('dinner');
   const [isGenerating, setIsGenerating] = useState(false);
   const [recommendation, setRecommendation] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyPrompt = async () => {
-    if (recommendation) {
-      await navigator.clipboard.writeText(recommendation);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const handleGenerateRecommendation = async () => {
     setIsGenerating(true);
-    setRecommendation(null);
+    setRecommendation('');
 
     try {
       // 获取AI推荐所需的数据
@@ -39,15 +33,29 @@ export default function AiRecommendation() {
         throw new Error('Failed to generate recommendation');
       }
 
-      const data = await response.json();
+      // 检查是否是流式响应
+      const contentType = response.headers.get('content-type');
+      if (contentType?.includes('text/plain')) {
+        // 流式响应
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
 
-      // 打印拼接的提示词到控制台
-      console.log('=== AI 推荐提示词 ===');
-      console.log(data.prompt);
-      console.log('=====================');
+        if (!reader) {
+          throw new Error('无法读取响应流');
+        }
 
-      // 在界面上显示提示词
-      setRecommendation(data.prompt);
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          setRecommendation((prev) => prev + chunk);
+        }
+      } else {
+        // 普通JSON响应（错误情况）
+        const data = await response.json();
+        throw new Error(data.error || '生成推荐失败');
+      }
     } catch (error) {
       console.error('Error generating recommendation:', error);
       setRecommendation('生成推荐失败，请重试');
@@ -165,19 +173,16 @@ export default function AiRecommendation() {
                 <span className="text-green-600 dark:text-green-400">✓</span>
               </div>
               <div className="flex-1">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    AI 推荐提示词
-                  </h3>
-                  <button
-                    onClick={handleCopyPrompt}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  AI 推荐结果
+                </h3>
+                <div className="prose prose-sm prose-headings:font-semibold prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 prose-blockquote:border-l-4 prose-blockquote:border-teal-500 prose-blockquote:pl-4 prose-blockquote:italic dark:prose-invert prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-hr:my-4 max-w-none text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed break-words overflow-wrap-anywhere">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                   >
-                    {copied ? '✓ 已复制' : '📋 复制提示词'}
-                  </button>
-                </div>
-                <div className="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
-                  {recommendation}
+                    {recommendation}
+                  </ReactMarkdown>
                 </div>
               </div>
             </div>
