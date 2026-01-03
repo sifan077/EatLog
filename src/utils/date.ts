@@ -84,6 +84,24 @@ export function formatTimeDisplay(date: Date | string): string {
   });
 }
 
+// Format date and time for display in Beijing Time (e.g., "2026年1月3日 12:30")
+export function formatDateTimeDisplay(date: Date | string): string {
+  const d = toBeijingTime(date);
+  const dateStr = d.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Shanghai',
+  });
+  const timeStr = d.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Shanghai',
+  });
+  return `${dateStr} ${timeStr}`;
+}
+
 // Check if two dates are the same day in Beijing Time
 export function isSameDay(date1: Date | string, date2: Date | string): boolean {
   const d1 = toBeijingTime(date1);
