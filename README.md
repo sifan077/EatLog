@@ -285,3 +285,5 @@ pnpm format:check
 - [Tailwind CSS](https://tailwindcss.com/)
 - [SiliconFlow](https://siliconflow.cn/)
 - [Qwen](https://qwenlm.github.io/)
+- [GML-4.7](https://github.com/THUDM/GLM-4)
+- [iFlow CLI](https://github.com/iflow-ai/iflow-cli)

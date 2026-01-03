@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import DashboardLayout from '@/components/DashboardLayout';
 import AiRecommendation from '@/components/AiRecommendation';
 
-export default async function StatsPage() {
+export default async function RecommendationPage() {
   const supabase = await createClient();
   const {
     data: { user },

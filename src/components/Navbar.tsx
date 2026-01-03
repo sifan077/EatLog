@@ -16,7 +16,7 @@ const navItems: NavItem[] = [
   { label: '今日记录', href: '/today', icon: '📅' },
   { label: '日历', href: '/calendar', icon: '📆' },
   { label: '搜索', href: '/search', icon: '🔍' },
-  { label: '统计', href: '/stats', icon: '📊' },
+  { label: 'AI推荐', href: '/recommendation', icon: '🤖' },
   { label: '个人信息', href: '/profile', icon: '👤' },
 ];
 
