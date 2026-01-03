@@ -2,6 +2,7 @@ import { getMealLogById } from '../../actions';
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import EditForm from '@/components/EditForm';
+import DashboardLayout from '@/components/DashboardLayout';
 import Link from 'next/link';
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -89,28 +90,24 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-lg border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/today"
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              <span className="text-2xl">←</span>
-              <span className="font-medium">返回</span>
-            </Link>
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">
-              编辑记录
-            </h1>
-            <div className="w-20"></div> {/* Spacer for centering */}
-          </div>
-        </div>
-      </header>
+    <DashboardLayout>
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 pt-4">
+      {/* Page Header */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
+        <Link
+          href="/today"
+          className="inline-flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors"
+        >
+          <span className="text-2xl">←</span>
+          <span className="font-medium">返回今日记录</span>
+        </Link>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-4">
+          编辑记录
+        </h2>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+      <main className="max-w-4xl mx-auto px-4 pb-8 sm:px-6 sm:pb-12">
         {error && (
           <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
             <span>⚠️</span>
@@ -121,5 +118,6 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         <EditForm meal={meal} photoUrls={photoUrls} />
       </main>
     </div>
+    </DashboardLayout>
   );
 }

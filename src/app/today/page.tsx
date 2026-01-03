@@ -1,9 +1,9 @@
 import { getTodayMealLogs } from '../actions';
-import LogoutButton from '@/components/LogoutButton';
 import { createClient } from '@/utils/supabase/server';
 import { formatDateDisplay } from '@/utils/date';
 import MealCard from '@/components/MealCard';
 import QuickRecordForm from '@/components/QuickRecordForm';
+import DashboardLayout from '@/components/DashboardLayout';
 import { MealLog } from '@/lib/types';
 
 export default async function TodayPage() {
@@ -58,26 +58,20 @@ export default async function TodayPage() {
   const today = formatDateDisplay(new Date());
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-lg border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">
-                Eat Log
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">
-                {today} · {displayName}
-              </p>
-            </div>
-            <LogoutButton />
-          </div>
-        </div>
-      </header>
+    <DashboardLayout>
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 pt-4">
+      {/* Page Header */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          {today}
+        </h2>
+        <p className="text-sm sm:text-base text-gray-600 mt-1">
+          {displayName}
+        </p>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+      <main className="max-w-4xl mx-auto px-4 pb-8 sm:px-6 sm:pb-12">
         {error && (
           <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
             <span>⚠️</span>
@@ -121,5 +115,6 @@ export default async function TodayPage() {
         </section>
       </main>
     </div>
+    </DashboardLayout>
   );
 }
