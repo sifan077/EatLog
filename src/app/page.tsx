@@ -2,8 +2,16 @@
 import { getTodos } from './actions';
 import AddTodoForm from '@/components/AddTodoForm';
 import TodoList from '@/components/TodoList';
+import LogoutButton from '@/components/LogoutButton';
+import { createClient } from '@/utils/supabase/server';
+import Link from 'next/link';
 
 export default async function Page() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   let todos = [];
   let error = null;
 
@@ -13,10 +21,18 @@ export default async function Page() {
     error = err instanceof Error ? err.message : 'Failed to fetch todos';
   }
 
+  const displayName = user?.user_metadata?.display_name || user?.email || '用户';
+
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900">Eat Log</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">Eat Log</h1>
+            <p className="text-gray-600 mt-1">欢迎, {displayName}</p>
+          </div>
+          <LogoutButton />
+        </div>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
