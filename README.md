@@ -75,11 +75,13 @@ API_KEY=your_siliconflow_api_key
 获取方式：
 
 **Supabase:**
+
 1. 访问 [Supabase Dashboard](https://supabase.com/dashboard)
 2. 选择项目 → Settings → API
 3. 复制 Project URL 和 anon/public key
 
 **SiliconFlow AI:**
+
 1. 访问 [SiliconFlow](https://siliconflow.cn)
 2. 注册账号并获取 API Key
 
@@ -232,6 +234,7 @@ pnpm format:check
 4. 自动部署
 
 **Vercel 配置：**
+
 - AI 推荐接口：60 秒超时（需要 Pro 版）
 - 禁用缓存和缓冲
 - 强制动态路由
