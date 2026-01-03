@@ -13,11 +13,8 @@ export default function QuickRecordForm() {
   const [mealType, setMealType] = useState(detectMealType());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showCamera, setShowCamera] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const supabase = createClient();
 
   const compressImage = (file: File, maxWidth: number = 1920, quality: number = 0.8): Promise<File> => {
@@ -128,72 +125,6 @@ export default function QuickRecordForm() {
     setPhotoPreviews(newPreviews);
   };
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setShowCamera(true);
-      }
-    } catch (err) {
-      setError('无法访问摄像头，请检查权限设置');
-      console.error('Camera error:', err);
-    }
-  };
-
-  const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach((track) => track.stop());
-      videoRef.current.srcObject = null;
-    }
-    setShowCamera(false);
-  };
-
-  const capturePhoto = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-
-    // Set canvas size to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // Draw video frame to canvas
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convert to blob
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-
-      // Compress the captured photo
-      try {
-        const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
-        const compressedFile = await compressImage(file, 1920, 0.8);
-
-        setPhotos([...photos, compressedFile]);
-
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPhotoPreviews([...photoPreviews, reader.result as string]);
-        };
-        reader.readAsDataURL(compressedFile);
-
-        stopCamera();
-      } catch (err) {
-        setError('照片处理失败');
-        console.error('Photo processing error:', err);
-      }
-    }, 'image/jpeg', 0.8);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -268,103 +199,127 @@ export default function QuickRecordForm() {
       </h3>
 
       {/* Photo Upload */}
+
               <div className="mb-6">
+
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+
                   照片 <span className="text-red-500">*</span>
+
                 </label>
+
       
+
                 {/* Photo Previews */}
+
                 {photoPreviews.length > 0 && (
+
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+
                     {photoPreviews.map((preview, index) => (
+
                       <div key={index} className="relative group">
+
                         <img
+
                           src={preview}
+
                           alt={`Preview ${index + 1}`}
+
                           className="w-full h-32 sm:h-40 object-cover rounded-lg"
+
                         />
+
                         <button
+
                           type="button"
+
                           onClick={() => handleRemovePhoto(index)}
+
                           disabled={loading}
+
                           className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+
                         >
+
                           ×
+
                         </button>
+
                         <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+
                           {photos[index] && `${(photos[index].size / 1024).toFixed(1)} KB`}
+
                         </div>
+
                       </div>
+
                     ))}
+
                   </div>
+
                 )}
+
       
-                {/* Camera Modal */}
-                {showCamera && (
-                  <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-                    <div className="w-full max-w-lg">
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        className="w-full rounded-lg mb-4"
-                      />
-                      <canvas ref={canvasRef} className="hidden" />
-                      <div className="flex gap-3 justify-center">
-                        <button
-                          type="button"
-                          onClick={capturePhoto}
-                          className="flex-1 bg-gradient-to-r from-cyan-500 to-teal-500 text-white py-3 rounded-xl font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all"
-                        >
-                          📸 拍照
-                        </button>
-                        <button
-                          type="button"
-                          onClick={stopCamera}
-                          className="flex-1 bg-gray-600 text-white py-3 rounded-xl font-semibold hover:bg-gray-700 transition-all"
-                        >
-                          取消
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-      
-                {/* Upload Buttons */}
-                <div className="flex gap-3">
-                  {/* Camera Button */}
-                  <button
-                    type="button"
-                    onClick={startCamera}
+
+                {/* Upload Button */}
+
+                <div
+
+                  className={`border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 ${
+
+                    photoPreviews.length > 0
+
+                      ? 'border-teal-400 bg-teal-50'
+
+                      : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
+
+                  }`}
+
+                  onClick={() => fileInputRef.current?.click()}
+
+                >
+
+                  <input
+
+                    ref={fileInputRef}
+
+                    type="file"
+
+                    accept="image/*"
+
+                    multiple
+
+                    onChange={handlePhotoChange}
+
+                    className="hidden"
+
                     disabled={loading}
-                    className="flex-1 border-2 border-dashed rounded-xl p-4 sm:p-6 text-center cursor-pointer transition-all duration-200 border-gray-300 hover:border-teal-400 hover:bg-gray-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="text-3xl sm:text-4xl mb-2">📷</div>
-                    <p className="text-gray-700 font-medium text-sm sm:text-base">拍照</p>
-                  </button>
+
+                  />
+
       
-                  {/* Upload Button */}
-                  <div
-                    className="flex-1 border-2 border-dashed rounded-xl p-4 sm:p-6 text-center cursor-pointer transition-all duration-200 border-gray-300 hover:border-teal-400 hover:bg-gray-50"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handlePhotoChange}
-                      className="hidden"
-                      disabled={loading}
-                    />
-                    <div className="text-3xl sm:text-4xl mb-2">📁</div>
-                    <p className="text-gray-700 font-medium text-sm sm:text-base">上传</p>
+
+                  <div>
+
+                    <div className="text-4xl sm:text-5xl mb-3">📸</div>
+
+                    <p className="text-gray-700 font-medium">
+
+                      {photoPreviews.length > 0 ? '继续添加照片' : '点击上传照片'}
+
+                    </p>
+
+                    <p className="text-sm text-gray-500 mt-1">
+
+                      支持 JPG、PNG、GIF、WebP，最大 10MB，可多选
+
+                    </p>
+
                   </div>
+
                 </div>
-      
-                <p className="text-xs text-gray-500 mt-2 text-center">
-                  支持 JPG、PNG、GIF、WebP，最大 10MB，可多选
-                </p>
+
               </div>      {/* Content */}
       <div className="mb-6">
         <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
