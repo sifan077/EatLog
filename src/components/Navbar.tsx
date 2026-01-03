@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
   { label: '日历', href: '/calendar', icon: '📆' },
   { label: '搜索', href: '/search', icon: '🔍' },
   { label: '统计', href: '/stats', icon: '📊' },
+  { label: '个人信息', href: '/profile', icon: '👤' },
 ];
 
 export default function Navbar() {

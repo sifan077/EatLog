@@ -2,8 +2,9 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { MealLog, MealLogInput } from '@/lib/types';
+import { MealLog, MealLogInput, UserProfile, UserProfileInput, NutritionAnalysis } from '@/lib/types';
 import { getStartOfDay, getEndOfDay } from '@/utils/date';
+import { analyzeNutrition } from '@/utils/nutrition';
 
 // ============================================
 // Todos Actions (Legacy)
@@ -240,4 +241,111 @@ export async function searchMealLogsByTags(tags: string[]): Promise<MealLog[]> {
   }
 
   return data || [];
+}
+
+// ============================================
+// User Profiles Actions
+// ============================================
+
+// Get user profile
+export async function getUserProfile(): Promise<UserProfile | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch user profile: ${error.message} (Code: ${error.code})`);
+  }
+
+  return data;
+}
+
+// Update user profile
+export async function updateUserProfile(
+  updates: UserProfileInput
+): Promise<UserProfile> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('未登录，请重新登录');
+  }
+
+  // Check if profile exists
+  const { data: existingProfile } = await supabase
+    .from('user_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .upsert(
+      {
+        user_id: user.id,
+        ...updates,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: 'user_id',
+      }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to update user profile: ${error.message} (Code: ${error.code})`);
+  }
+
+  revalidatePath('/profile');
+
+  return data;
+}
+
+// ============================================
+// Diet Recommendations
+// ============================================
+
+// Get nutrition analysis and recommendations
+export async function getNutritionAnalysis(): Promise<NutritionAnalysis> {
+  const supabase = await createClient();
+  
+  // Get user profile
+  const profile = await getUserProfile();
+  
+  if (!profile) {
+    throw new Error('未登录，请重新登录');
+  }
+  
+  // Get today's meal logs
+  const todayStart = getStartOfDay();
+  const todayEnd = getEndOfDay();
+  
+  const { data: mealLogs, error: mealsError } = await supabase
+    .from('meal_logs')
+    .select('*')
+    .gte('eaten_at', todayStart.toISOString())
+    .lte('eaten_at', todayEnd.toISOString())
+    .order('eaten_at', { ascending: false });
+  
+  if (mealsError) {
+    console.error('Supabase error:', mealsError);
+    throw new Error(`Failed to fetch meal logs: ${mealsError.message} (Code: ${mealsError.code})`);
+  }
+  
+  // Analyze nutrition
+  return analyzeNutrition(mealLogs || [], profile);
 }

@@ -45,3 +45,54 @@ export const MEAL_TIME_RANGES = {
   evening_snack: { start: 21, end: 4 }, // 21:00 - 4:59 (next day)
   snack: { start: 0, end: 23 }, // All day
 } as const;
+
+// ============================================
+// User Profile Constants
+// ============================================
+
+// Activity Levels
+export const ACTIVITY_LEVELS = [
+  { value: 'sedentary', label: '久坐不动', description: '几乎不运动' },
+  { value: 'light', label: '轻度活动', description: '每周运动 1-3 天' },
+  { value: 'moderate', label: '中度活动', description: '每周运动 3-5 天' },
+  { value: 'active', label: '高度活动', description: '每周运动 6-7 天' },
+  { value: 'very_active', label: '非常活跃', description: '每天运动或体力劳动' },
+] as const;
+
+// Diet Goals
+export const DIET_GOALS = [
+  '减脂',
+  '增肌',
+  '保持体重',
+  '健康饮食',
+  '控制血糖',
+  '提高代谢',
+  '增强免疫力',
+  '改善睡眠',
+] as const;
+
+// Dietary Restrictions
+export const DIETARY_RESTRICTIONS = [
+  '素食',
+  '纯素食',
+  '无麸质',
+  '无乳制品',
+  '低钠',
+  '低糖',
+  '生酮饮食',
+  '地中海饮食',
+  '鱼类'
+] as const;
+
+// Common Allergies
+export const COMMON_ALLERGIES = [
+  '花生',
+  '坚果',
+  '海鲜',
+  '贝类',
+  '鸡蛋',
+  '牛奶',
+  '大豆',
+  '小麦',
+  '芝麻',
+] as const;
