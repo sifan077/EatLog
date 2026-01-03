@@ -54,7 +54,9 @@ function buildUserProfileSection(profile: UserProfile): string {
     '',
     '### 饮食限制（重要：推荐时必须严格遵守）',
     profile.dietary_restrictions && profile.dietary_restrictions.length > 0
-      ? profile.dietary_restrictions.map((restriction) => `- ${restriction}（绝对不能包含相关食材）`).join('\n')
+      ? profile.dietary_restrictions
+          .map((restriction) => `- ${restriction}（绝对不能包含相关食材）`)
+          .join('\n')
       : '- 无',
     '',
     '### 过敏原（重要：推荐时必须完全避免）',

@@ -177,10 +177,7 @@ export default function AiRecommendation() {
                   AI 推荐结果
                 </h3>
                 <div className="prose prose-sm prose-headings:font-semibold prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 prose-blockquote:border-l-4 prose-blockquote:border-teal-500 prose-blockquote:pl-4 prose-blockquote:italic dark:prose-invert prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-hr:my-4 max-w-none text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed break-words overflow-wrap-anywhere">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
-                  >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                     {recommendation}
                   </ReactMarkdown>
                 </div>
