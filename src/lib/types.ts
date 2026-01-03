@@ -56,12 +56,7 @@ export interface UserProfile {
   updated_at: string;
 }
 
-export type ActivityLevel =
-  | 'sedentary'
-  | 'light'
-  | 'moderate'
-  | 'active'
-  | 'very_active';
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
 
 export interface UserProfileInput {
   display_name?: string;

@@ -7,10 +7,10 @@ export function calculateBMR(profile: UserProfile): number {
   const height = profile.height || 0;
   const birthDate = profile.birth_date ? new Date(profile.birth_date) : new Date();
   const age = new Date().getFullYear() - birthDate.getFullYear();
-  
+
   // Assume male for now (can be enhanced with gender field)
   const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-  
+
   return Math.round(bmr);
 }
 
@@ -24,7 +24,7 @@ export function calculateTDEE(profile: UserProfile): number {
     active: 1.725,
     very_active: 1.9,
   };
-  
+
   const multiplier = activityMultipliers[profile.activity_level || 'moderate'] || 1.55;
   return Math.round(bmr * multiplier);
 }
@@ -32,22 +32,21 @@ export function calculateTDEE(profile: UserProfile): number {
 // Analyze nutrition from meal logs
 export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): NutritionAnalysis {
   const totalCalories = mealLogs.reduce((sum, meal) => sum + (meal.price || 0), 0);
-  
+
   // Simple estimation: assume average meal has 500 calories
   // In production, you would have detailed nutrition data
   const estimatedCaloriesPerMeal = 500;
   const totalEstimatedCalories = mealLogs.length * estimatedCaloriesPerMeal;
-  
-  const averageCaloriesPerMeal = mealLogs.length > 0 
-    ? Math.round(totalEstimatedCalories / mealLogs.length) 
-    : 0;
-  
+
+  const averageCaloriesPerMeal =
+    mealLogs.length > 0 ? Math.round(totalEstimatedCalories / mealLogs.length) : 0;
+
   const tdee = calculateTDEE(profile);
   const targetCalories = profile.daily_calorie_target || tdee;
-  
+
   // Generate recommendations
   const recommendations: DietRecommendation[] = [];
-  
+
   // Calorie intake analysis
   if (mealLogs.length === 0) {
     recommendations.push({
@@ -86,7 +85,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
       icon: '✅',
     });
   }
-  
+
   // Meal frequency analysis
   if (mealLogs.length < 3) {
     recommendations.push({
@@ -98,7 +97,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
       icon: '🍴',
     });
   }
-  
+
   // Diet goals based recommendations
   if (profile.diet_goals) {
     if (profile.diet_goals.includes('减脂')) {
@@ -111,7 +110,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
         icon: '🥗',
       });
     }
-    
+
     if (profile.diet_goals.includes('增肌')) {
       recommendations.push({
         id: 'muscle-gain',
@@ -122,7 +121,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
         icon: '💪',
       });
     }
-    
+
     if (profile.diet_goals.includes('健康饮食')) {
       recommendations.push({
         id: 'healthy-eating',
@@ -134,7 +133,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
       });
     }
   }
-  
+
   // Dietary restrictions recommendations
   if (profile.dietary_restrictions) {
     if (profile.dietary_restrictions.includes('素食')) {
@@ -147,7 +146,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
         icon: '🥬',
       });
     }
-    
+
     if (profile.dietary_restrictions.includes('低糖')) {
       recommendations.push({
         id: 'low-sugar',
@@ -159,7 +158,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
       });
     }
   }
-  
+
   // Allergies warning
   if (profile.allergies && profile.allergies.length > 0) {
     recommendations.push({
@@ -171,7 +170,7 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
       icon: '🚫',
     });
   }
-  
+
   return {
     totalCalories: totalEstimatedCalories,
     totalProtein: 0, // Would be calculated from detailed nutrition data
@@ -186,19 +185,13 @@ export function analyzeNutrition(mealLogs: MealLog[], profile: UserProfile): Nut
 // Get meal suggestions based on profile
 export function getMealSuggestions(profile: UserProfile): string[] {
   const suggestions: string[] = [];
-  
+
   // Based on diet goals
   if (profile.diet_goals) {
     if (profile.diet_goals.includes('减脂')) {
-      suggestions.push(
-        '鸡胸肉沙拉',
-        '清蒸鱼配蔬菜',
-        '燕麦粥配水果',
-        '烤鸡胸肉',
-        '蔬菜汤'
-      );
+      suggestions.push('鸡胸肉沙拉', '清蒸鱼配蔬菜', '燕麦粥配水果', '烤鸡胸肉', '蔬菜汤');
     }
-    
+
     if (profile.diet_goals.includes('增肌')) {
       suggestions.push(
         '牛排配糙米饭',
@@ -208,51 +201,27 @@ export function getMealSuggestions(profile: UserProfile): string[] {
         '鸡胸肉配土豆'
       );
     }
-    
+
     if (profile.diet_goals.includes('健康饮食')) {
-      suggestions.push(
-        '蔬菜沙拉',
-        '全麦三明治',
-        '水果酸奶',
-        '蒸蔬菜',
-        '坚果拼盘'
-      );
+      suggestions.push('蔬菜沙拉', '全麦三明治', '水果酸奶', '蒸蔬菜', '坚果拼盘');
     }
   }
-  
+
   // Based on dietary restrictions
   if (profile.dietary_restrictions) {
     if (profile.dietary_restrictions.includes('素食')) {
-      suggestions.push(
-        '豆腐蔬菜汤',
-        '素食炒饭',
-        '坚果沙拉',
-        '全麦面包配牛油果',
-        '豆浆配全麦馒头'
-      );
+      suggestions.push('豆腐蔬菜汤', '素食炒饭', '坚果沙拉', '全麦面包配牛油果', '豆浆配全麦馒头');
     }
-    
+
     if (profile.dietary_restrictions.includes('无麸质')) {
-      suggestions.push(
-        '米饭配蔬菜',
-        '土豆泥',
-        '玉米沙拉',
-        '藜麦碗',
-        '水果拼盘'
-      );
+      suggestions.push('米饭配蔬菜', '土豆泥', '玉米沙拉', '藜麦碗', '水果拼盘');
     }
   }
-  
+
   // Default suggestions
   if (suggestions.length === 0) {
-    suggestions.push(
-      '均衡营养餐',
-      '蔬菜沙拉',
-      '全麦三明治',
-      '水果酸奶',
-      '坚果拼盘'
-    );
+    suggestions.push('均衡营养餐', '蔬菜沙拉', '全麦三明治', '水果酸奶', '坚果拼盘');
   }
-  
+
   return suggestions.slice(0, 5);
 }

@@ -81,7 +81,7 @@ export const DIETARY_RESTRICTIONS = [
   '低糖',
   '生酮饮食',
   '地中海饮食',
-  '鱼类'
+  '鱼类',
 ] as const;
 
 // Common Allergies

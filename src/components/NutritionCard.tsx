@@ -71,18 +71,18 @@ export default function NutritionCard({ analysis }: NutritionCardProps) {
               >
                 <span className="text-2xl flex-shrink-0">{rec.icon}</span>
                 <div className="flex-1">
-                  <h4 className={`font-semibold mb-1 ${
-                    rec.category === 'warning'
-                      ? 'text-red-700 dark:text-red-400'
-                      : rec.category === 'meal'
-                        ? 'text-teal-700 dark:text-teal-400'
-                        : 'text-cyan-700 dark:text-cyan-400'
-                  }`}>
+                  <h4
+                    className={`font-semibold mb-1 ${
+                      rec.category === 'warning'
+                        ? 'text-red-700 dark:text-red-400'
+                        : rec.category === 'meal'
+                          ? 'text-teal-700 dark:text-teal-400'
+                          : 'text-cyan-700 dark:text-cyan-400'
+                    }`}
+                  >
                     {rec.title}
                   </h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {rec.description}
-                  </p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{rec.description}</p>
                 </div>
               </div>
             ))}

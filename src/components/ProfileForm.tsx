@@ -39,7 +39,9 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
   const [allergiesInput, setAllergiesInput] = useState('');
 
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
-  const [activeTagField, setActiveTagField] = useState<'diet_goals' | 'dietary_restrictions' | 'allergies'>('diet_goals');
+  const [activeTagField, setActiveTagField] = useState<
+    'diet_goals' | 'dietary_restrictions' | 'allergies'
+  >('diet_goals');
 
   const handleInputChange = (field: keyof UserProfileInput, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -142,7 +144,10 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
         <div className="space-y-4">
           {/* Display Name */}
           <div>
-            <label htmlFor="display_name" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="display_name"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               显示名称
             </label>
             <input
@@ -159,7 +164,10 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
 
           {/* Bio */}
           <div>
-            <label htmlFor="bio" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="bio"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               个人简介
             </label>
             <textarea
@@ -172,12 +180,17 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
               placeholder="简单介绍一下自己..."
               className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
-            <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{(formData.bio || '').length}/200</div>
+            <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {(formData.bio || '').length}/200
+            </div>
           </div>
 
           {/* Birth Date */}
           <div>
-            <label htmlFor="birth_date" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="birth_date"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               生日
             </label>
             <input
@@ -199,7 +212,10 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
         <div className="space-y-4">
           {/* Height */}
           <div>
-            <label htmlFor="height" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="height"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               身高 (cm)
             </label>
             <input
@@ -218,7 +234,10 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
 
           {/* Weight */}
           <div>
-            <label htmlFor="weight" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="weight"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               体重 (kg)
             </label>
             <input
@@ -262,14 +281,19 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
 
           {/* Daily Calorie Target */}
           <div>
-            <label htmlFor="daily_calorie_target" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="daily_calorie_target"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            >
               每日卡路里目标
             </label>
             <input
               id="daily_calorie_target"
               type="number"
               value={formData.daily_calorie_target || ''}
-              onChange={(e) => handleInputChange('daily_calorie_target', parseInt(e.target.value) || undefined)}
+              onChange={(e) =>
+                handleInputChange('daily_calorie_target', parseInt(e.target.value) || undefined)
+              }
               disabled={loading || !isEditing}
               min="1000"
               max="5000"
@@ -311,20 +335,23 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 placeholder="添加饮食目标..."
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
-              {showTagSuggestions && activeTagField === 'diet_goals' && dietGoalsInput && getTagSuggestions('diet_goals').length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                  {getTagSuggestions('diet_goals').map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleAddTag(tag, 'diet_goals')}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {showTagSuggestions &&
+                activeTagField === 'diet_goals' &&
+                dietGoalsInput &&
+                getTagSuggestions('diet_goals').length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                    {getTagSuggestions('diet_goals').map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => handleAddTag(tag, 'diet_goals')}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {formData.diet_goals?.map((tag, index) => (
@@ -389,20 +416,23 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 placeholder="添加饮食限制..."
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
-              {showTagSuggestions && activeTagField === 'dietary_restrictions' && dietaryRestrictionsInput && getTagSuggestions('dietary_restrictions').length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                  {getTagSuggestions('dietary_restrictions').map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleAddTag(tag, 'dietary_restrictions')}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {showTagSuggestions &&
+                activeTagField === 'dietary_restrictions' &&
+                dietaryRestrictionsInput &&
+                getTagSuggestions('dietary_restrictions').length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                    {getTagSuggestions('dietary_restrictions').map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => handleAddTag(tag, 'dietary_restrictions')}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {formData.dietary_restrictions?.map((tag, index) => (
@@ -427,7 +457,9 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">快速选择：</p>
                 <div className="flex flex-wrap gap-2">
-                  {DIETARY_RESTRICTIONS.filter((tag) => !formData.dietary_restrictions?.includes(tag)).map((tag) => (
+                  {DIETARY_RESTRICTIONS.filter(
+                    (tag) => !formData.dietary_restrictions?.includes(tag)
+                  ).map((tag) => (
                     <button
                       key={tag}
                       type="button"
@@ -467,20 +499,23 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 placeholder="添加过敏信息..."
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
-              {showTagSuggestions && activeTagField === 'allergies' && allergiesInput && getTagSuggestions('allergies').length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                  {getTagSuggestions('allergies').map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleAddTag(tag, 'allergies')}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {showTagSuggestions &&
+                activeTagField === 'allergies' &&
+                allergiesInput &&
+                getTagSuggestions('allergies').length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                    {getTagSuggestions('allergies').map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => handleAddTag(tag, 'allergies')}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {formData.allergies?.map((tag, index) => (
@@ -505,17 +540,19 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">快速选择：</p>
                 <div className="flex flex-wrap gap-2">
-                  {COMMON_ALLERGIES.filter((tag) => !formData.allergies?.includes(tag)).map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleAddTag(tag, 'allergies')}
-                      disabled={loading}
-                      className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-400 transition-colors disabled:cursor-not-allowed"
-                    >
-                      + {tag}
-                    </button>
-                  ))}
+                  {COMMON_ALLERGIES.filter((tag) => !formData.allergies?.includes(tag)).map(
+                    (tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => handleAddTag(tag, 'allergies')}
+                        disabled={loading}
+                        className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-400 transition-colors disabled:cursor-not-allowed"
+                      >
+                        + {tag}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             )}
