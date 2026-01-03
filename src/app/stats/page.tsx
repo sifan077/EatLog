@@ -73,9 +73,7 @@ export default async function StatsPage() {
 
               <div className="text-center py-8">
                 <div className="text-4xl mb-3">📈</div>
-                <p className="text-gray-600 dark:text-gray-400">
-                  统计功能正在开发中...
-                </p>
+                <p className="text-gray-600 dark:text-gray-400">统计功能正在开发中...</p>
               </div>
             </div>
           </section>

@@ -292,7 +292,10 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
               type="number"
               value={formData.daily_calorie_target || ''}
               onChange={(e) =>
-                handleInputChange('daily_calorie_target', e.target.value ? parseFloat(e.target.value) : undefined)
+                handleInputChange(
+                  'daily_calorie_target',
+                  e.target.value ? parseFloat(e.target.value) : undefined
+                )
               }
               disabled={loading || !isEditing}
               min="1000"

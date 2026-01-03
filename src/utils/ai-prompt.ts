@@ -49,17 +49,17 @@ function buildUserProfileSection(profile: UserProfile): string {
     '',
     '### 饮食目标',
     profile.diet_goals && profile.diet_goals.length > 0
-      ? profile.diet_goals.map(goal => `- ${goal}`).join('\n')
+      ? profile.diet_goals.map((goal) => `- ${goal}`).join('\n')
       : '- 未设置',
     '',
     '### 饮食限制',
     profile.dietary_restrictions && profile.dietary_restrictions.length > 0
-      ? profile.dietary_restrictions.map(restriction => `- ${restriction}`).join('\n')
+      ? profile.dietary_restrictions.map((restriction) => `- ${restriction}`).join('\n')
       : '- 无',
     '',
     '### 过敏原',
     profile.allergies && profile.allergies.length > 0
-      ? profile.allergies.map(allergy => `- ${allergy}`).join('\n')
+      ? profile.allergies.map((allergy) => `- ${allergy}`).join('\n')
       : '- 无',
   ];
 
@@ -83,8 +83,8 @@ function buildRecentMealsSection(meals: MealLog[]): string {
     lines.push(`### ${date}`);
     lines.push('');
 
-    dayMeals.forEach(meal => {
-      const mealType = MEAL_TYPES.find(mt => mt.value === meal.meal_type);
+    dayMeals.forEach((meal) => {
+      const mealType = MEAL_TYPES.find((mt) => mt.value === meal.meal_type);
       const time = new Date(meal.eaten_at).toLocaleTimeString('zh-CN', {
         hour: '2-digit',
         minute: '2-digit',
@@ -103,7 +103,7 @@ function buildRecentMealsSection(meals: MealLog[]): string {
  * 构建当前饮食部分
  */
 function buildCurrentMealSection(meal: MealLog): string {
-  const mealType = MEAL_TYPES.find(mt => mt.value === meal.meal_type);
+  const mealType = MEAL_TYPES.find((mt) => mt.value === meal.meal_type);
   const time = new Date(meal.eaten_at).toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
@@ -163,7 +163,7 @@ function buildRequestSection(hasCurrentMeal: boolean): string {
     '- 如果信息不足（如缺少身高体重数据），请明确指出需要补充的信息',
     '- 建议要具体、实用，避免空泛',
     '- 充分考虑我的个人情况和偏好',
-    '- 输出格式使用Markdown，便于阅读'
+    '- 输出格式使用Markdown，便于阅读',
   ];
 
   return lines.join('\n');
@@ -175,7 +175,7 @@ function buildRequestSection(hasCurrentMeal: boolean): string {
 function groupMealsByDate(meals: MealLog[]): Record<string, MealLog[]> {
   const grouped: Record<string, MealLog[]> = {};
 
-  meals.forEach(meal => {
+  meals.forEach((meal) => {
     const date = new Date(meal.eaten_at).toLocaleDateString('zh-CN', {
       year: 'numeric',
       month: '2-digit',
@@ -216,7 +216,9 @@ export function buildQuickDietPrompt(
   nextMealType?: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack'
 ): string {
   const summary = buildDietSummary(userProfile, recentMeals);
-  const mealLabel = nextMealType ? MEAL_TYPES.find(mt => mt.value === nextMealType)?.label : '下一餐';
+  const mealLabel = nextMealType
+    ? MEAL_TYPES.find((mt) => mt.value === nextMealType)?.label
+    : '下一餐';
 
   return `作为一位专业的营养师，请基于以下信息为用户推荐${mealLabel}：
 
@@ -256,7 +258,7 @@ function buildDietSummary(profile: UserProfile, meals: MealLog[]): string {
 function getTopTags(tags: string[], limit: number): string[] {
   const counts: Record<string, number> = {};
 
-  tags.forEach(tag => {
+  tags.forEach((tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
   });
 
@@ -280,7 +282,7 @@ export function buildMealRecommendationPrompt(
 ): string {
   const userSection = buildUserProfileSection(userProfile);
   const recentMealsSection = buildRecentMealsSection(recentMeals);
-  const nextMealLabel = MEAL_TYPES.find(mt => mt.value === nextMealType)?.label || nextMealType;
+  const nextMealLabel = MEAL_TYPES.find((mt) => mt.value === nextMealType)?.label || nextMealType;
 
   const requestSection = `
 ## 食谱推荐请求

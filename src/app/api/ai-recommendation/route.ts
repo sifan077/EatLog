@@ -11,11 +11,7 @@ export async function POST(request: NextRequest) {
     const { profile, recentMeals } = await getAiRecommendationData();
 
     // 构建AI推荐提示词
-    const prompt = buildMealRecommendationPrompt(
-      profile,
-      recentMeals,
-      mealType || 'dinner'
-    );
+    const prompt = buildMealRecommendationPrompt(profile, recentMeals, mealType || 'dinner');
 
     return NextResponse.json({
       success: true,
