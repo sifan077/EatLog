@@ -17,7 +17,7 @@ export default function QuickRecordForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
-  const compressImage = (file: File, maxWidth: number = 1920, quality: number = 0.8): Promise<File> => {
+  const compressImage = (file: File, maxWidth: number = 1280, quality: number = 0.6): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -94,7 +94,7 @@ export default function QuickRecordForm() {
         }
 
         // Compress image
-        const compressedFile = await compressImage(file, 1920, 0.8);
+        const compressedFile = await compressImage(file, 1280, 0.6);
         newPhotos.push(compressedFile);
 
         // Create preview
