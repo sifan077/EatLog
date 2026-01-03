@@ -276,11 +276,15 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
       onSubmit={handleSubmit}
       className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50 dark:border-gray-800/50 transition-colors duration-300"
     >
-      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">编辑记录</h3>
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+        编辑记录
+      </h3>
 
       {/* Photos Section */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">照片</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          照片
+        </label>
 
         {/* Existing Photos */}
         {existingPhotoUrls.length > 0 && (
@@ -351,13 +355,18 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           />
           <div className="text-4xl mb-2">📸</div>
           <p className="text-gray-700 dark:text-gray-300 font-medium">添加更多照片</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">支持 JPG、PNG、GIF、WebP，最大 10MB</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            支持 JPG、PNG、GIF、WebP，最大 10MB
+          </p>
         </div>
       </div>
 
       {/* Content */}
       <div className="mb-6">
-        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="content"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           描述
         </label>
         <textarea
@@ -370,12 +379,16 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           placeholder="简单描述一下这顿饭..."
           className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{content.length}/200</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {content.length}/200
+        </div>
       </div>
 
       {/* Meal Type */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">餐次</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          餐次
+        </label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
           {MEAL_TYPES.map((type) => (
             <button
@@ -398,7 +411,10 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
 
       {/* Time */}
       <div className="mb-6">
-        <label htmlFor="eatenAt" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="eatenAt"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           进餐时间
         </label>
         <input
@@ -413,7 +429,10 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
 
       {/* Price */}
       <div className="mb-6">
-        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="price"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           价格
         </label>
         <div className="relative">
@@ -437,7 +456,10 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
 
       {/* Location */}
       <div className="mb-6">
-        <label htmlFor="location" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="location"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           地点
         </label>
         <input
@@ -450,12 +472,16 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           placeholder="例如：家里、公司、餐厅..."
           className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{location.length}/100</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {location.length}/100
+        </div>
       </div>
 
       {/* Tags */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">标签</label>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          标签
+        </label>
         <div className="relative">
           <input
             type="text"

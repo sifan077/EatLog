@@ -46,7 +46,9 @@ export default function LoginPage() {
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent mb-2">
             Eat Log
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">记录每一餐，享受生活</p>
+          <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
+            记录每一餐，享受生活
+          </p>
         </div>
 
         {/* Login Card */}
@@ -63,7 +65,10 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-5 sm:space-y-6">
             {/* Email Input */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="email"
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
                 邮箱地址
               </label>
               <div className="relative">
@@ -85,7 +90,10 @@ export default function LoginPage() {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
                 密码
               </label>
               <div className="relative">

@@ -23,7 +23,10 @@ export default function TodayLoading() {
                 {Array(6)
                   .fill(0)
                   .map((_, i) => (
-                    <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+                    <div
+                      key={i}
+                      className="h-20 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"
+                    />
                   ))}
               </div>
             </div>

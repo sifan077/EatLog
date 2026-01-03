@@ -204,7 +204,9 @@ export default function QuickRecordForm() {
       onSubmit={handleSubmit}
       className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 border border-white/50 dark:border-gray-800/50 transition-colors duration-300"
     >
-      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">快速记录</h3>
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+        快速记录
+      </h3>
       {/* Photo Upload */}
       <div className="mb-6">
         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -275,7 +277,10 @@ export default function QuickRecordForm() {
       </div>{' '}
       {/* Content */}
       <div className="mb-6">
-        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="content"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           描述
         </label>
         <textarea
@@ -288,11 +293,16 @@ export default function QuickRecordForm() {
           placeholder="简单描述一下这顿饭..."
           className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/30 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">{content.length}/200</div>
+        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {content.length}/200
+        </div>
       </div>
       {/* Price */}
       <div className="mb-6">
-        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="price"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+        >
           价格
         </label>
         <div className="relative">

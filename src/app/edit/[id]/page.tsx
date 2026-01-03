@@ -95,7 +95,9 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             <span className="text-2xl">←</span>
             <span className="font-medium">返回今日记录</span>
           </Link>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-4">编辑记录</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-4">
+            编辑记录
+          </h2>
         </div>
 
         {/* Main Content */}

@@ -58,11 +58,15 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
         {/* Content */}
         <div className="flex-1 p-4 sm:p-6">
           {/* Time */}
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{formatTimeDisplay(meal.eaten_at)}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            {formatTimeDisplay(meal.eaten_at)}
+          </div>
 
           {/* Price */}
           {meal.price > 0 && (
-            <div className="text-lg font-semibold text-teal-600 dark:text-teal-400 mb-2">¥{meal.price.toFixed(2)}</div>
+            <div className="text-lg font-semibold text-teal-600 dark:text-teal-400 mb-2">
+              ¥{meal.price.toFixed(2)}
+            </div>
           )}
 
           {/* Description */}
@@ -95,7 +99,9 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
           )}
 
           {/* Edit Hint */}
-          <div className="mt-3 sm:mt-4 text-xs text-gray-400 dark:text-gray-500">点击查看详情或编辑</div>
+          <div className="mt-3 sm:mt-4 text-xs text-gray-400 dark:text-gray-500">
+            点击查看详情或编辑
+          </div>
         </div>
       </div>
     </Link>

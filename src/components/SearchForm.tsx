@@ -131,8 +131,12 @@ export default function SearchForm() {
       {!query && (
         <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-12 text-center border border-white/50 dark:border-gray-800/50 transition-colors duration-300">
           <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">搜索记录</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">输入关键词搜索你的饮食记录</p>
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            搜索记录
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+            输入关键词搜索你的饮食记录
+          </p>
         </div>
       )}
 
@@ -140,7 +144,9 @@ export default function SearchForm() {
       {query && !loading && results.length === 0 && !error && (
         <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-12 text-center border border-white/50 dark:border-gray-800/50 transition-colors duration-300">
           <div className="text-6xl mb-4">📭</div>
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">没有找到结果</h3>
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            没有找到结果
+          </h3>
           <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">试试其他关键词</p>
         </div>
       )}
@@ -149,8 +155,12 @@ export default function SearchForm() {
       {results.length > 0 && (
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between px-2">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">搜索结果</h3>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{results.length} 条记录</span>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+              搜索结果
+            </h3>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {results.length} 条记录
+            </span>
           </div>
           {results.map((meal) => (
             <MealCard

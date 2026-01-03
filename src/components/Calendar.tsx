@@ -203,13 +203,17 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
               {formatDateDisplay(selectedDate)}
             </h3>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{selectedMealLogs.length} 条记录</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {selectedMealLogs.length} 条记录
+            </span>
           </div>
 
           {selectedMealLogs.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
               <div className="text-4xl sm:text-5xl mb-3">🍽️</div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">这一天没有记录</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                这一天没有记录
+              </p>
             </div>
           ) : (
             <div className="space-y-4 sm:space-y-6">
