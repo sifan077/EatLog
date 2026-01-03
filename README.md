@@ -1,23 +1,38 @@
-# Eat Log - 饮食记录应用
+# Eat Log - 智能饮食记录应用
 
-一个专注于饮食记录的 Web 应用，支持拍照记录每日饮食，快速记录 + 电脑端完善详情。
+一个专注于饮食记录的 Web 应用，支持拍照记录每日饮食，AI 智能推荐，帮助你养成健康的饮食习惯。
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-v0.0.1-blue.svg)](https://github.com/sifan077/EatLog/releases/tag/v0.0.1)
 
 ## ✨ 功能特点
 
 ### 核心功能
 
-- 🖼️ **多图支持** - 一次记录可以上传多张照片
-- 🗜️ **自动压缩** - 图片自动压缩，节省存储空间
-- 📝 **简短描述** - 快速记录食物描述
-- 🍽️ **餐次分类** - 6 种餐次类型（早餐、午餐、下午加餐、晚餐、晚上加餐、零食）
+- 📸 **拍照记录** - 拍照上传美食照片，记录每一餐
+- 🗜️ **图片优化** - 自动压缩和优化，节省存储空间
+- 📝 **快速记录** - 简短描述，快速完成记录
+- 🍽️ **餐次分类** - 6 种餐次类型，自动判断餐次
 - 📅 **今日记录** - 查看今日所有饮食记录
-- ⏰ **智能判断** - 根据北京时间自动判断餐次
+- ✏️ **编辑完善** - 补充位置、标签、价格等详细信息
+- 📆 **日历浏览** - 按日期查看历史记录
+- 🔍 **智能搜索** - 关键词搜索，快速找到记录
 
-### 移动端优化
+### 🤖 AI 智能推荐 ⭐
 
-- 📱 **PWA 支持** - 可安装为移动应用
-- 🎨 **响应式设计** - 完美适配手机和平板
-- ⚡ **离线支持** - PWA 离线缓存
+- 🎯 **个性化推荐** - 基于你的饮食习惯和目标推荐菜品
+- 📊 **营养分析** - 分析你的营养摄入状况
+- 💡 **健康建议** - 提供专业的饮食改进建议
+- 🔄 **流式响应** - 实时显示 AI 生成内容
+- 📝 **Markdown 支持** - 美观的格式化展示
+- 🚫 **智能避坑** - 自动避开你的饮食限制和过敏原
+
+### 用户体验
+
+- 🌓 **暗色模式** - 支持系统级暗色模式切换
+- 📱 **响应式设计** - 完美适配手机和桌面端
+- 🎨 **现代化 UI** - 毛玻璃效果、渐变、流畅动画
+- ⚡ **快速响应** - 优化的性能，流畅的体验
 
 ### 安全特性
 
@@ -34,6 +49,7 @@
 - Node.js 18+
 - pnpm（推荐）
 - Supabase 账号
+- SiliconFlow API Key（用于 AI 功能）
 
 ### 安装依赖
 
@@ -46,15 +62,26 @@ pnpm install
 创建 `.env.local` 文件：
 
 ```env
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_publishable_key
+
+# AI Configuration (SiliconFlow)
+AI_BASE_URL=https://api.siliconflow.cn/v1/chat/completions
+MODEL_NAME=Qwen/Qwen2.5-7B-Instruct
+API_KEY=your_siliconflow_api_key
 ```
 
 获取方式：
 
+**Supabase:**
 1. 访问 [Supabase Dashboard](https://supabase.com/dashboard)
 2. 选择项目 → Settings → API
 3. 复制 Project URL 和 anon/public key
+
+**SiliconFlow AI:**
+1. 访问 [SiliconFlow](https://siliconflow.cn)
+2. 注册账号并获取 API Key
 
 ### 配置数据库
 
@@ -79,16 +106,18 @@ pnpm dev
 - **框架**: Next.js 16.1.1 (App Router)
 - **UI 库**: React 19.2.3
 - **后端服务**: Supabase (Database + Auth + Storage)
-- **样式**: Tailwind CSS 4
+- **AI 服务**: SiliconFlow (Qwen2.5-7B-Instruct)
+- **样式**: Tailwind CSS 4 + Typography
+- **Markdown**: react-markdown + remark-gfm + rehype-raw
 - **语言**: TypeScript 5
 - **包管理器**: pnpm
-- **PWA**: next-pwa
 
 ## 🎨 设计理念
 
 - 📱 **手机端快速记录**：拍照 → 简短描述 → 选择餐次 → 完成（3 步）
 - 💻 **电脑端完善详情**：补充地点、标签等详细信息
 - 🔄 **数据完整**：手机快速记录，电脑补充信息
+- 🤖 **智能推荐**：AI 基于你的饮食习惯提供个性化建议
 - 📊 **可回顾**：方便查看历史记录和统计
 
 ## 📁 项目结构
@@ -100,27 +129,41 @@ eat-log/
 │   │   ├── layout.tsx           # 根布局组件
 │   │   ├── page.tsx             # 首页（重定向到 /today）
 │   │   ├── globals.css          # 全局样式
+│   │   ├── actions.ts           # Server Actions
 │   │   ├── login/               # 登录页面
-│   │   │   └── page.tsx
 │   │   ├── today/               # 今日记录页面
-│   │   │   └── page.tsx
-│   │   └── actions.ts           # Server Actions
+│   │   ├── edit/                # 编辑记录页面
+│   │   ├── calendar/            # 日历浏览页面
+│   │   ├── search/              # 搜索页面
+│   │   ├── stats/               # AI 推荐页面
+│   │   ├── profile/             # 个人信息页面
+│   │   └── api/                 # API 路由
+│   │       └── ai-recommendation/ # AI 推荐接口
 │   ├── components/              # React 组件
+│   │   ├── PhotoUpload.tsx      # 照片上传组件
 │   │   ├── QuickRecordForm.tsx  # 快速记录表单
 │   │   ├── MealCard.tsx         # 记录卡片
-│   │   └── LogoutButton.tsx     # 登出按钮
+│   │   ├── EditForm.tsx         # 编辑表单
+│   │   ├── AiRecommendation.tsx # AI 推荐组件
+│   │   ├── Calendar.tsx         # 日历组件
+│   │   ├── Navbar.tsx           # 导航栏
+│   │   ├── ThemeToggle.tsx      # 主题切换
+│   │   └── ...
 │   ├── lib/                     # 工具库
 │   │   ├── constants.ts         # 常量定义
 │   │   └── types.ts             # TypeScript 类型定义
 │   └── utils/
-│       ├── supabase/
-│       │   ├── server.ts        # 服务端客户端
-│       │   ├── client.ts        # 客户端客户端
-│       │   └── storage.ts       # Storage 工具
-│       └── date.ts              # 日期工具
+│       ├── supabase/            # Supabase 工具
+│       ├── date.ts              # 日期工具
+│       ├── nutrition.ts         # 营养分析工具
+│       └── ai-prompt.ts         # AI 提示词构建
 ├── public/                      # 静态资源目录
 ├── doc/                         # 文档目录
 ├── supabase-schema.sql          # 数据库表结构
+├── vercel.json                  # Vercel 配置
+├── next.config.ts               # Next.js 配置
+├── tailwind.config.ts           # Tailwind 配置
+├── tsconfig.json                # TypeScript 配置
 └── .env.example                 # 环境变量示例
 ```
 
@@ -173,11 +216,11 @@ pnpm format:check
 - 防止未授权访问
 - 防止盗刷
 
-### 部署要求
+### AI 安全
 
-- 必须使用 HTTPS
-- 正确配置环境变量
-- 配置 Supabase RLS 策略
+- API Key 存储在环境变量
+- 服务端调用，不暴露给前端
+- 提示词中明确标注饮食限制和过敏原
 
 ## 🚢 部署
 
@@ -188,6 +231,11 @@ pnpm format:check
 3. 配置环境变量
 4. 自动部署
 
+**Vercel 配置：**
+- AI 推荐接口：60 秒超时（需要 Pro 版）
+- 禁用缓存和缓冲
+- 强制动态路由
+
 ### 其他平台
 
 支持任何支持 Next.js 的平台：
@@ -197,27 +245,40 @@ pnpm format:check
 - Render
 - 自建服务器
 
-## 📝 开发计划
+## 📝 版本历史
 
-- [x] 用户认证
-- [x] 今日记录页面
-- [x] 拍照上传
-- [x] 多图支持
-- [x] 图片压缩
-- [x] PWA 支持
-- [ ] 编辑记录详情
-- [ ] 按日期浏览
-- [ ] 搜索功能
-- [ ] 统计功能
+### v0.0.1 (2026-01-03)
 
-## 📄 许可证
+**初始 MVP 版本**
 
-MIT
+- ✅ 用户认证和个人信息管理
+- ✅ 饮食记录（拍照、描述、餐次）
+- ✅ 今日记录页面
+- ✅ 编辑记录详情
+- ✅ 日历浏览
+- ✅ 搜索功能
+- ✅ AI 智能推荐（SiliconFlow LLM）
+- ✅ 流式响应支持
+- ✅ Markdown 渲染
+- ✅ 暗色模式
+- ✅ 响应式设计
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+
 ## 📧 联系方式
 
 如有问题，请提交 Issue。
+
+## 🙏 致谢
+
+- [Next.js](https://nextjs.org/)
+- [Supabase](https://supabase.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [SiliconFlow](https://siliconflow.cn/)
+- [Qwen](https://qwenlm.github.io/)
