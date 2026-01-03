@@ -8,6 +8,7 @@ export interface MealLog {
   eaten_at: string;
   location: string | null;
   tags: string[] | null;
+  price: number;
   created_at: string;
   updated_at: string;
 }
@@ -21,6 +22,7 @@ export interface MealLogInput {
   eaten_at?: string;
   location?: string;
   tags?: string[];
+  price?: number;
 }
 
 export interface MealLogUpdate extends Partial<MealLogInput> {

@@ -23,6 +23,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
   const [mealType, setMealType] = useState(meal.meal_type);
   const [eatenAt, setEatenAt] = useState(meal.eaten_at.slice(0, 16)); // Format for datetime-local input
   const [location, setLocation] = useState(meal.location || '');
+  const [price, setPrice] = useState(meal.price > 0 ? meal.price.toString() : '');
   const [tags, setTags] = useState<string[]>(meal.tags || []);
   const [tagInput, setTagInput] = useState('');
 
@@ -209,6 +210,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           meal_type: mealType,
           eaten_at: new Date(eatenAt).toISOString(),
           location: location.trim() || null,
+          price: price ? parseFloat(price) : 0,
           tags: tags.length > 0 ? tags : null,
           photo_paths: allPhotoPaths,
           updated_at: new Date().toISOString(),
@@ -413,6 +415,32 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
           disabled={loading}
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
         />
+      </div>
+
+      {/* Price */}
+      <div className="mb-6">
+        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+          价格
+        </label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <span className="text-gray-400 font-medium">¥</span>
+          </div>
+          <input
+            id="price"
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            disabled={loading}
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+          />
+        </div>
+        <p className="text-xs text-gray-500 mt-1">
+          可选，默认为 0
+        </p>
       </div>
 
       {/* Location */}

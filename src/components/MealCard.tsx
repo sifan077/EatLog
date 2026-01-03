@@ -29,12 +29,12 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
     >
       <div className="flex flex-col sm:flex-row">
         {/* Photo */}
-        <div className="sm:w-48 sm:h-48 flex-shrink-0 relative bg-gray-100">
+        <div className="w-full h-48 sm:w-48 sm:h-48 flex-none relative bg-gray-100 overflow-hidden">
           {firstPhotoUrl && !imageErrors.has(0) ? (
             <img
               src={firstPhotoUrl}
               alt={meal.content || 'Meal photo'}
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover"
               onError={() => handleImageError(0)}
             />
           ) : (
@@ -61,6 +61,13 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
           <div className="text-sm text-gray-500 mb-2">
             {formatTimeDisplay(meal.eaten_at)}
           </div>
+
+          {/* Price */}
+          {meal.price > 0 && (
+            <div className="text-lg font-semibold text-teal-600 mb-2">
+              ¥{meal.price.toFixed(2)}
+            </div>
+          )}
 
           {/* Description */}
           {meal.content && (

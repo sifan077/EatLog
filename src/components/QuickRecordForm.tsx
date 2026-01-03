@@ -11,6 +11,7 @@ export default function QuickRecordForm() {
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [mealType, setMealType] = useState(detectMealType());
+  const [price, setPrice] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -168,6 +169,7 @@ export default function QuickRecordForm() {
         content: content.trim() || null,
         meal_type: mealType,
         eaten_at: new Date().toISOString(),
+        price: price ? parseFloat(price) : 0,
       });
 
       if (insertError) {
@@ -179,6 +181,7 @@ export default function QuickRecordForm() {
       setPhotoPreviews([]);
       setContent('');
       setMealType(detectMealType());
+      setPrice('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -338,6 +341,32 @@ export default function QuickRecordForm() {
         <div className="text-right text-xs text-gray-500 mt-1">
           {content.length}/200
         </div>
+      </div>
+
+      {/* Price */}
+      <div className="mb-6">
+        <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+          价格
+        </label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <span className="text-gray-400 font-medium">¥</span>
+          </div>
+          <input
+            id="price"
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            disabled={loading}
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200"
+          />
+        </div>
+        <p className="text-xs text-gray-500 mt-1">
+          可选，默认为 0
+        </p>
       </div>
 
       {/* Meal Type */}

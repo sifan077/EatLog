@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.meal_logs (
   -- Optional fields (filled on desktop)
   location TEXT,                      -- Location
   tags TEXT[],                        -- Tags array
+  price DECIMAL(10, 2) DEFAULT 0,     -- Price in currency (default 0 means not recorded)
 
   -- Metadata
   created_at TIMESTAMPTZ DEFAULT NOW(),
