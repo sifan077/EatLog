@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getAiRecommendationData } from '../../actions';
-import { buildMealRecommendationPrompt } from '@/utils/ai-prompt';
+import { buildMealRecommendationPrompt, buildTodaySummaryPrompt } from '@/utils/ai-prompt';
 
 // 强制使用动态路由，避免Vercel的静态优化
 export const dynamic = 'force-dynamic';
@@ -16,10 +16,27 @@ export async function POST(request: NextRequest) {
     const { mealType } = body;
 
     // 获取用户档案和最近7天的饮食记录
-    const { profile, recentMeals } = await getAiRecommendationData();
+    const { profile, recentMeals, todayMeals } = await getAiRecommendationData();
 
     // 构建AI推荐提示词
-    const prompt = buildMealRecommendationPrompt(profile, recentMeals, mealType || 'dinner');
+    let prompt;
+    if (mealType === 'snack') {
+      // 今日总结模式
+      prompt = buildTodaySummaryPrompt(profile, todayMeals, recentMeals);
+    } else {
+      // 正常推荐模式
+      prompt = buildMealRecommendationPrompt(
+        profile,
+        recentMeals,
+        mealType || 'dinner',
+        todayMeals
+      );
+    }
+
+    // 打印 prompt 到控制台
+    console.log('=== AI Recommendation Prompt ===');
+    console.log(prompt);
+    console.log('=== End of Prompt ===');
 
     // 从环境变量读取配置
     const aiBaseUrl = process.env.AI_BASE_URL;

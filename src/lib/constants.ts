@@ -5,7 +5,7 @@ export const MEAL_TYPES = [
   { value: 'afternoon_snack', label: '下午加餐', emoji: '☕' },
   { value: 'dinner', label: '晚餐', emoji: '🍽️' },
   { value: 'evening_snack', label: '晚上加餐', emoji: '🌙' },
-  { value: 'snack', label: '零食', emoji: '🍪' },
+  { value: 'snack', label: '今日总结', emoji: '📊' },
 ] as const;
 
 // Tag Suggestions

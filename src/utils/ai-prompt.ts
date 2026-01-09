@@ -297,13 +297,140 @@ function getTopTags(tags: string[], limit: number): string[] {
  * @param nextMealType 下一餐的餐次类型（如 'lunch', 'dinner'）
  * @returns 结构化的食谱推荐提示词
  */
+/**
+ * 构建今日饮食数据部分
+ */
+function buildTodayMealsSection(
+  meals: MealLog[],
+  nextMealType: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack'
+): string {
+  if (meals.length === 0) {
+    return '## 今日饮食\n\n今天还没有记录任何饮食。';
+  }
+
+  const lines = ['## 今日饮食', '', `*注：今天已记录 ${meals.length} 餐。*`, ''];
+
+  // 按餐次分组
+  const mealsByType: Record<string, MealLog[]> = {};
+  meals.forEach((meal) => {
+    if (!mealsByType[meal.meal_type]) {
+      mealsByType[meal.meal_type] = [];
+    }
+    mealsByType[meal.meal_type].push(meal);
+  });
+
+  // 按餐次顺序显示
+  const mealTypeOrder = [
+    'breakfast',
+    'lunch',
+    'afternoon_snack',
+    'dinner',
+    'evening_snack',
+    'snack',
+  ];
+
+  mealTypeOrder.forEach((type) => {
+    const typeMeals = mealsByType[type];
+    if (typeMeals && typeMeals.length > 0) {
+      const mealType = MEAL_TYPES.find((mt) => mt.value === type);
+      lines.push(`### ${mealType?.label || type}`);
+      lines.push('');
+
+      typeMeals.forEach((meal) => {
+        const time = new Date(meal.eaten_at).toLocaleTimeString('zh-CN', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        lines.push(`- ${time}: ${meal.content || '无描述'}`);
+        if (meal.price > 0) {
+          lines.push(`  价格: ¥${meal.price.toFixed(2)}`);
+        }
+        if (meal.location) {
+          lines.push(`  地点: ${meal.location}`);
+        }
+        if (meal.tags && meal.tags.length > 0) {
+          lines.push(`  标签: ${meal.tags.join(', ')}`);
+        }
+        lines.push('');
+      });
+    }
+  });
+
+  return lines.join('\n');
+}
+
+/**
+ * 构建今日总结的提示词
+ */
+export function buildTodaySummaryPrompt(
+  userProfile: UserProfile,
+  todayMeals: MealLog[],
+  recentMeals: MealLog[]
+): string {
+  const userSection = buildUserProfileSection(userProfile);
+  const todayMealsSection = buildTodayMealsSection(todayMeals, 'dinner'); // 使用任意值，不影响显示
+
+  const requestSection = `
+## 今日饮食总结请求
+
+你是一位专业的营养师，擅长分析饮食记录并提供健康建议。
+
+请根据我今天的饮食记录，为我提供一份详细的今日饮食总结。
+
+## 输出要求
+
+请按以下格式输出：
+
+### 第一部分：今日饮食概览
+- 今日共记录了几餐
+- 按餐次列出所有食物（包括时间、描述、价格、地点）
+- 如果有标签，也一并列出
+
+### 第二部分：热量分析
+- 估算今日总热量摄入
+- 与每日目标热量对比（如果有设置）
+- 分析热量分布是否合理
+
+### 第三部分：营养分析
+- 分析蛋白质、碳水、脂肪的摄入情况
+- 评估营养均衡程度
+- 指出营养亮点和不足
+
+### 第四部分：饮食评价
+- 今日饮食的优点
+- 需要改进的地方
+- 是否符合减脂目标
+
+### 第五部分：改进建议
+- 2-3条具体的饮食改进建议
+- 明天可以尝试的食物搭配
+- 需要注意的事项
+
+## 注意事项
+- 如果今天没有记录，请明确指出并建议开始记录
+- 建议要具体、实用，避免空泛
+- 充分考虑我的个人情况和偏好
+- 使用Markdown格式输出
+- 如果数据不足，请说明并基于用户档案给出一般性建议
+`;
+
+  return `${userSection}
+
+${todayMealsSection}
+
+${requestSection}`;
+}
+
 export function buildMealRecommendationPrompt(
   userProfile: UserProfile,
   recentMeals: MealLog[],
-  nextMealType: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack'
+  nextMealType: 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack',
+  todayMeals?: MealLog[]
 ): string {
   const userSection = buildUserProfileSection(userProfile);
   const recentMealsSection = buildRecentMealsSection(recentMeals);
+  const todayMealsSection = todayMeals ? buildTodayMealsSection(todayMeals, nextMealType) : '';
   const nextMealLabel = MEAL_TYPES.find((mt) => mt.value === nextMealType)?.label || nextMealType;
 
   const requestSection = `
@@ -314,17 +441,21 @@ export function buildMealRecommendationPrompt(
 请根据我的饮食历史、热量摄入趋势、营养均衡情况以及减脂目标，
 为我推荐**今天${nextMealLabel}**的具体食谱。
 
+**重要：请重点参考"今日饮食"部分，根据今天已经摄入的食物来调整推荐！**
+
 ## 推荐要求
 
 ### 热量控制
 - 根据我的减脂目标，估算合理的热量范围
-- 考虑我今日已摄入的热量（如果有）
+- **重点考虑我今日已摄入的热量**，确保全天热量不超标
+- 如果今天已经摄入较多，推荐低热量或清淡的菜品
 - 明确标注这餐的推荐热量范围
 
 ### 营养比例
 - 明确主食、蛋白质、蔬菜的比例建议
 - 确保营养均衡，符合减脂需求
-- 考虑我近期饮食的营养状况，适当调整
+- **根据今日已摄入的营养状况调整**，避免营养重复或缺失
+- 如果今天蛋白质不足，适当增加蛋白质推荐
 
 ### 食材选择
 - 使用常见的、容易购买的食材
@@ -337,13 +468,19 @@ export function buildMealRecommendationPrompt(
 
 请按以下格式输出：
 
-### 第一部分：近期饮食分析
+### 第一部分：今日饮食总结
+- 总结今天已经摄入的食物
+- 估算今日已摄入的热量（如果有价格信息，可以参考）
+- 分析今日营养摄入情况（蛋白质、碳水、脂肪等）
+- 指出今日饮食的优缺点
+
+### 第二部分：近期饮食分析（7天）
 简要分析我过去7天的饮食情况，如果不足7天就是我还没有记录够，包括：
 - 热量摄入趋势
 - 营养均衡状况
 - 存在的问题和改进方向
 
-### 第二部分：${nextMealLabel}推荐
+### 第三部分：${nextMealLabel}推荐
 
 
 **推荐菜品**：xxx
@@ -362,7 +499,7 @@ export function buildMealRecommendationPrompt(
 
 **营养亮点**：xxx
 
-### 第三部分：额外建议
+### 第四部分：额外建议
 - 2-3条实用的饮食建议
 - 注意事项或风险提示
 
@@ -370,12 +507,15 @@ export function buildMealRecommendationPrompt(
 - 如果信息不足，请明确指出需要补充的信息
 - 建议要具体、实用，避免空泛
 - 充分考虑我的个人情况和偏好，不要出现我不吃的
+- **重点考虑今日已摄入的数据，确保推荐合理**
 - 使用Markdown格式输出
 `;
 
   return `${userSection}
 
 ${recentMealsSection}
+
+${todayMealsSection}
 
 ${requestSection}`;
 }

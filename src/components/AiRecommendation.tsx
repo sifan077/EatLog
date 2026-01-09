@@ -9,7 +9,18 @@ import { MEAL_TYPES } from '@/lib/constants';
 type MealType = 'breakfast' | 'lunch' | 'dinner' | 'afternoon_snack' | 'evening_snack' | 'snack';
 
 export default function AiRecommendation() {
-  const [selectedMealType, setSelectedMealType] = useState<MealType>('dinner');
+  // 根据当前时间自动推荐下一餐
+  const getAutoSuggestedMeal = (): MealType => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 9) return 'breakfast';
+    if (hour >= 9 && hour < 14) return 'lunch';
+    if (hour >= 14 && hour < 17) return 'afternoon_snack';
+    if (hour >= 17 && hour < 21) return 'dinner';
+    if (hour >= 21 || hour < 5) return 'evening_snack';
+    return 'dinner';
+  };
+
+  const [selectedMealType, setSelectedMealType] = useState<MealType>(getAutoSuggestedMeal());
   const [isGenerating, setIsGenerating] = useState(false);
   const [recommendation, setRecommendation] = useState<string | null>(null);
 
@@ -82,21 +93,6 @@ export default function AiRecommendation() {
     } finally {
       setIsGenerating(false);
     }
-  };
-
-  const getCurrentHour = () => {
-    return new Date().getHours();
-  };
-
-  // 根据当前时间自动推荐下一餐
-  const getAutoSuggestedMeal = (): MealType => {
-    const hour = getCurrentHour();
-    if (hour >= 5 && hour < 9) return 'breakfast';
-    if (hour >= 9 && hour < 14) return 'lunch';
-    if (hour >= 14 && hour < 17) return 'afternoon_snack';
-    if (hour >= 17 && hour < 21) return 'dinner';
-    if (hour >= 21 || hour < 5) return 'evening_snack';
-    return 'dinner';
   };
 
   return (

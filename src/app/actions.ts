@@ -384,8 +384,27 @@ export async function getAiRecommendationData() {
     throw new Error(`Failed to fetch meal logs: ${mealsError.message} (Code: ${mealsError.code})`);
   }
 
+  // Get today's meal logs
+  const todayStart = getStartOfDay();
+  const todayEnd = getEndOfDay();
+
+  const { data: todayMealLogs, error: todayMealsError } = await supabase
+    .from('meal_logs')
+    .select('*')
+    .gte('eaten_at', todayStart.toISOString())
+    .lte('eaten_at', todayEnd.toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (todayMealsError) {
+    console.error('Supabase error:', todayMealsError);
+    throw new Error(
+      `Failed to fetch today's meal logs: ${todayMealsError.message} (Code: ${todayMealsError.code})`
+    );
+  }
+
   return {
     profile,
     recentMeals: mealLogs || [],
+    todayMeals: todayMealLogs || [],
   };
 }

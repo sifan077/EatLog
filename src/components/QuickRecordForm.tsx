@@ -329,7 +329,7 @@ export default function QuickRecordForm() {
           餐次 <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-          {MEAL_TYPES.map((type) => (
+          {MEAL_TYPES.filter((type) => type.value !== 'snack').map((type) => (
             <button
               key={type.value}
               type="button"

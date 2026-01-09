@@ -23,10 +23,21 @@ export default function EditForm({
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 将 UTC 时间转换为本地时间格式用于 datetime-local 输入框
+  const formatDateTimeForInput = (isoString: string) => {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   // Form state
   const [content, setContent] = useState(meal.content || '');
   const [mealType, setMealType] = useState(meal.meal_type);
-  const [eatenAt, setEatenAt] = useState(meal.eaten_at.slice(0, 16)); // Format for datetime-local input
+  const [eatenAt, setEatenAt] = useState(formatDateTimeForInput(meal.eaten_at));
   const [location, setLocation] = useState(meal.location || '');
   const [price, setPrice] = useState(meal.price > 0 ? meal.price.toString() : '');
   const [tags, setTags] = useState<string[]>(meal.tags || []);
