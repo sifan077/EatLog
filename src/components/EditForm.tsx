@@ -11,9 +11,14 @@ import { generatePhotoPath, isValidImageFile, isValidFileSize } from '@/utils/su
 interface EditFormProps {
   meal: MealLog;
   photoUrls: (string | null)[];
+  returnUrl?: string;
 }
 
-export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditFormProps) {
+export default function EditForm({
+  meal,
+  photoUrls: initialPhotoUrls,
+  returnUrl = '/today',
+}: EditFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -225,7 +230,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
         throw new Error(`更新失败: ${updateError.message}`);
       }
 
-      router.push('/');
+      router.push(returnUrl);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : '更新失败');
@@ -257,7 +262,7 @@ export default function EditForm({ meal, photoUrls: initialPhotoUrls }: EditForm
         throw new Error(`删除失败: ${deleteError.message}`);
       }
 
-      router.push('/');
+      router.push(returnUrl);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : '删除失败');

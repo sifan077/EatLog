@@ -5,8 +5,15 @@ import EditForm from '@/components/EditForm';
 import DashboardLayout from '@/components/DashboardLayout';
 import Link from 'next/link';
 
-export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnUrl?: string }>;
+}) {
   const { id } = await params;
+  const { returnUrl } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -89,11 +96,11 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         {/* Page Header */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
           <Link
-            href="/today"
+            href={returnUrl || '/today'}
             className="inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             <span className="text-2xl">←</span>
-            <span className="font-medium">返回今日记录</span>
+            <span className="font-medium">返回</span>
           </Link>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-4">
             编辑记录
@@ -109,7 +116,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             </div>
           )}
 
-          <EditForm meal={meal} photoUrls={photoUrls} />
+          <EditForm meal={meal} photoUrls={photoUrls} returnUrl={returnUrl || '/today'} />
         </main>
       </div>
     </DashboardLayout>

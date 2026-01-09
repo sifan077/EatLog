@@ -108,7 +108,12 @@ export default async function TodayPage() {
             ) : (
               <div className="space-y-4 sm:space-y-6">
                 {mealLogsWithUrls.map((meal) => (
-                  <MealCard key={meal.id} meal={meal} photoUrls={meal.photoUrls} />
+                  <MealCard
+                    key={meal.id}
+                    meal={meal}
+                    photoUrls={meal.photoUrls}
+                    returnUrl="/today"
+                  />
                 ))}
               </div>
             )}

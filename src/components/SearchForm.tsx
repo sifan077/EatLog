@@ -167,6 +167,7 @@ export default function SearchForm() {
               key={meal.id}
               meal={meal}
               photoUrls={photoUrlsMap.get(meal.id) || meal.photo_paths.map(() => null)}
+              returnUrl="/search"
             />
           ))}
         </div>

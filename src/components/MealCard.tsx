@@ -9,9 +9,10 @@ import { useState } from 'react';
 interface MealCardProps {
   meal: MealLog;
   photoUrls: (string | null)[];
+  returnUrl?: string;
 }
 
-export default function MealCard({ meal, photoUrls }: MealCardProps) {
+export default function MealCard({ meal, photoUrls, returnUrl }: MealCardProps) {
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
   const mealType = MEAL_TYPES.find((t) => t.value === meal.meal_type);
 
@@ -22,9 +23,13 @@ export default function MealCard({ meal, photoUrls }: MealCardProps) {
   const firstPhotoUrl = photoUrls[0];
   const photoCount = meal.photo_paths.length;
 
+  const editUrl = returnUrl
+    ? `/edit/${meal.id}?returnUrl=${encodeURIComponent(returnUrl)}`
+    : `/edit/${meal.id}`;
+
   return (
     <Link
-      href={`/edit/${meal.id}`}
+      href={editUrl}
       className="block bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-white/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.01]"
     >
       <div className="flex flex-col sm:flex-row">

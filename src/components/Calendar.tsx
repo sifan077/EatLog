@@ -222,6 +222,7 @@ export default function Calendar({ mealLogs, photoUrlsMap }: CalendarProps) {
                   key={meal.id}
                   meal={meal}
                   photoUrls={photoUrlsMap.get(meal.id) || meal.photo_paths.map(() => null)}
+                  returnUrl="/calendar"
                 />
               ))}
             </div>
