@@ -1,6 +1,6 @@
 # Eat Log - 智能饮食记录应用
 
-一个专注于饮食记录的 Web 应用，支持拍照记录每日饮食，AI 智能推荐，帮助你养成健康的饮食习惯。
+一个专注于饮食记录的 Web 应用，支持拍照记录每日饮食，帮助你养成健康的饮食习惯。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-v0.0.1-blue.svg)](https://github.com/sifan077/EatLog/releases/tag/v0.0.1)
@@ -18,14 +18,12 @@
 - 📆 **日历浏览** - 按日期查看历史记录
 - 🔍 **智能搜索** - 关键词搜索，快速找到记录
 
-### 🤖 AI 智能推荐 ⭐
+### 统计分析
 
-- 🎯 **个性化推荐** - 基于你的饮食习惯和目标推荐菜品
-- 📊 **营养分析** - 分析你的营养摄入状况
-- 💡 **健康建议** - 提供专业的饮食改进建议
-- 🔄 **流式响应** - 实时显示 AI 生成内容
-- 📝 **Markdown 支持** - 美观的格式化展示
-- 🚫 **智能避坑** - 自动避开你的饮食限制和过敏原
+- 📊 **统计分析** - 查看饮食记录统计
+- 💰 **花费统计** - 追踪饮食开销，支持今日、本周、本月和日均统计
+- 🔥 **连续记录** - 记录连续打卡天数
+- 🏷️ **热门标签** - 统计最常用的标签
 
 ### 用户体验
 
@@ -49,7 +47,6 @@
 - Node.js 18+
 - pnpm（推荐）
 - Supabase 账号
-- SiliconFlow API Key（用于 AI 功能）
 
 ### 安装依赖
 
@@ -65,25 +62,13 @@ pnpm install
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_publishable_key
-
-# AI Configuration (SiliconFlow)
-AI_BASE_URL=https://api.siliconflow.cn/v1/chat/completions
-MODEL_NAME=Qwen/Qwen2.5-7B-Instruct
-API_KEY=your_siliconflow_api_key
 ```
 
 获取方式：
 
-**Supabase:**
-
 1. 访问 [Supabase Dashboard](https://supabase.com/dashboard)
 2. 选择项目 → Settings → API
 3. 复制 Project URL 和 anon/public key
-
-**SiliconFlow AI:**
-
-1. 访问 [SiliconFlow](https://siliconflow.cn)
-2. 注册账号并获取 API Key
 
 ### 配置数据库
 
@@ -108,9 +93,7 @@ pnpm dev
 - **框架**: Next.js 16.1.1 (App Router)
 - **UI 库**: React 19.2.3
 - **后端服务**: Supabase (Database + Auth + Storage)
-- **AI 服务**: SiliconFlow (Qwen2.5-7B-Instruct)
 - **样式**: Tailwind CSS 4 + Typography
-- **Markdown**: react-markdown + remark-gfm + rehype-raw
 - **语言**: TypeScript 5
 - **包管理器**: pnpm
 
@@ -119,7 +102,6 @@ pnpm dev
 - 📱 **手机端快速记录**：拍照 → 简短描述 → 选择餐次 → 完成（3 步）
 - 💻 **电脑端完善详情**：补充地点、标签等详细信息
 - 🔄 **数据完整**：手机快速记录，电脑补充信息
-- 🤖 **智能推荐**：AI 基于你的饮食习惯提供个性化建议
 - 📊 **可回顾**：方便查看历史记录和统计
 
 ## 📁 项目结构
@@ -137,17 +119,14 @@ eat-log/
 │   │   ├── edit/                # 编辑记录页面
 │   │   ├── calendar/            # 日历浏览页面
 │   │   ├── search/              # 搜索页面
-│   │   ├── stats/               # AI 推荐页面
-│   │   ├── profile/             # 个人信息页面
-│   │   └── api/                 # API 路由
-│   │       └── ai-recommendation/ # AI 推荐接口
+│   │   ├── stats/               # 统计页面
+│   │   └── profile/             # 个人信息页面
 │   ├── components/              # React 组件
-│   │   ├── PhotoUpload.tsx      # 照片上传组件
 │   │   ├── QuickRecordForm.tsx  # 快速记录表单
 │   │   ├── MealCard.tsx         # 记录卡片
 │   │   ├── EditForm.tsx         # 编辑表单
-│   │   ├── AiRecommendation.tsx # AI 推荐组件
 │   │   ├── Calendar.tsx         # 日历组件
+│   │   ├── StatsCard.tsx        # 统计卡片
 │   │   ├── Navbar.tsx           # 导航栏
 │   │   ├── ThemeToggle.tsx      # 主题切换
 │   │   └── ...
@@ -156,9 +135,7 @@ eat-log/
 │   │   └── types.ts             # TypeScript 类型定义
 │   └── utils/
 │       ├── supabase/            # Supabase 工具
-│       ├── date.ts              # 日期工具
-│       ├── nutrition.ts         # 营养分析工具
-│       └── ai-prompt.ts         # AI 提示词构建
+│       └── date.ts              # 日期工具
 ├── public/                      # 静态资源目录
 ├── doc/                         # 文档目录
 ├── supabase-schema.sql          # 数据库表结构
@@ -200,7 +177,7 @@ pnpm format:check
 | `afternoon_snack` | 下午加餐 | ☕    | 14:00 - 16:59        |
 | `dinner`          | 晚餐     | 🍽️    | 17:00 - 20:59        |
 | `evening_snack`   | 晚上加餐 | 🌙    | 21:00 - 4:59         |
-| `snack`           | 零食     | 🍪    | 全天                 |
+| `snack`           | 今日总结 | 📊    | 全天                 |
 
 ## 🔐 安全说明
 
@@ -218,12 +195,6 @@ pnpm format:check
 - 防止未授权访问
 - 防止盗刷
 
-### AI 安全
-
-- API Key 存储在环境变量
-- 服务端调用，不暴露给前端
-- 提示词中明确标注饮食限制和过敏原
-
 ## 🚢 部署
 
 ### Vercel 部署（推荐）
@@ -235,7 +206,6 @@ pnpm format:check
 
 **Vercel 配置：**
 
-- AI 推荐接口：60 秒超时（需要 Pro 版）
 - 禁用缓存和缓冲
 - 强制动态路由
 
@@ -260,9 +230,7 @@ pnpm format:check
 - ✅ 编辑记录详情
 - ✅ 日历浏览
 - ✅ 搜索功能
-- ✅ AI 智能推荐（SiliconFlow LLM）
-- ✅ 流式响应支持
-- ✅ Markdown 渲染
+- ✅ 统计分析（记录统计、花费统计）
 - ✅ 暗色模式
 - ✅ 响应式设计
 
@@ -283,7 +251,4 @@ pnpm format:check
 - [Next.js](https://nextjs.org/)
 - [Supabase](https://supabase.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [SiliconFlow](https://siliconflow.cn/)
-- [Qwen](https://qwenlm.github.io/)
-- [GML-4.7](https://github.com/THUDM/GLM-4)
 - [iFlow CLI](https://github.com/iflow-ai/iflow-cli)

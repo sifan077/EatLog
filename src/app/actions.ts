@@ -2,73 +2,8 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import {
-  MealLog,
-  MealLogInput,
-  UserProfile,
-  UserProfileInput,
-  NutritionAnalysis,
-} from '@/lib/types';
+import { MealLog, MealLogInput, UserProfile, UserProfileInput } from '@/lib/types';
 import { getStartOfDay, getEndOfDay } from '@/utils/date';
-import { analyzeNutrition } from '@/utils/nutrition';
-
-// ============================================
-// Todos Actions (Legacy)
-// ============================================
-
-export async function getTodos() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('todos')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(`Failed to fetch todos: ${error.message} (Code: ${error.code})`);
-  }
-
-  return data;
-}
-
-export async function createTodo(formData: FormData) {
-  const supabase = await createClient();
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string;
-
-  const { error } = await supabase.from('todos').insert({ title, description });
-
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(`Failed to create todo: ${error.message} (Code: ${error.code})`);
-  }
-
-  revalidatePath('/');
-}
-
-export async function updateTodo(id: string, completed: boolean) {
-  const supabase = await createClient();
-  const { error } = await supabase.from('todos').update({ completed }).eq('id', id);
-
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(`Failed to update todo: ${error.message} (Code: ${error.code})`);
-  }
-
-  revalidatePath('/');
-}
-
-export async function deleteTodo(id: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from('todos').delete().eq('id', id);
-
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(`Failed to delete todo: ${error.message} (Code: ${error.code})`);
-  }
-
-  revalidatePath('/');
-}
 
 // ============================================
 // Meal Logs Actions
@@ -320,36 +255,247 @@ export async function updateUserProfile(updates: UserProfileInput): Promise<User
 }
 
 // ============================================
-// Diet Recommendations
+// Statistics Actions
 // ============================================
 
-// Get nutrition analysis and recommendations
-export async function getNutritionAnalysis(): Promise<NutritionAnalysis> {
+// Get streak days (consecutive days with meal logs)
+export async function getStreakDays(): Promise<number> {
   const supabase = await createClient();
 
-  // Get user profile
-  const profile = await getUserProfile();
-
-  if (!profile) {
-    throw new Error('未登录，请重新登录');
-  }
-
-  // Get today's meal logs
-  const todayStart = getStartOfDay();
-  const todayEnd = getEndOfDay();
-
-  const { data: mealLogs, error: mealsError } = await supabase
+  // Get all meal logs ordered by date
+  const { data: mealLogs, error } = await supabase
     .from('meal_logs')
-    .select('*')
-    .gte('eaten_at', todayStart.toISOString())
-    .lte('eaten_at', todayEnd.toISOString())
+    .select('eaten_at')
     .order('eaten_at', { ascending: false });
 
-  if (mealsError) {
-    console.error('Supabase error:', mealsError);
-    throw new Error(`Failed to fetch meal logs: ${mealsError.message} (Code: ${mealsError.code})`);
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
   }
 
-  // Analyze nutrition
-  return analyzeNutrition(mealLogs || [], profile);
+  if (!mealLogs || mealLogs.length === 0) {
+    return 0;
+  }
+
+  // Group by date
+  const datesSet = new Set(
+    mealLogs.map((meal) => {
+      const date = new Date(meal.eaten_at);
+      return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    })
+  );
+
+  const dates = Array.from(datesSet).sort((a, b) => b.localeCompare(a));
+
+  // Calculate streak
+  let streak = 0;
+  let currentDate = new Date();
+  currentDate = new Date(currentDate.toLocaleDateString('en-US', { timeZone: 'Asia/Shanghai' }));
+
+  for (let i = 0; i < dates.length; i++) {
+    const expectedDate = new Date(currentDate);
+    expectedDate.setDate(expectedDate.getDate() - i);
+    const expectedDateStr = expectedDate.toLocaleDateString('en-CA', {
+      timeZone: 'Asia/Shanghai',
+    });
+
+    if (dates[i] === expectedDateStr) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+// Get recent days statistics (last 7 days)
+export async function getRecentDaysStats(): Promise<
+  Array<{ date: string; mealCount: number; hasRecords: boolean }>
+> {
+  const supabase = await createClient();
+
+  // Get meal logs from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+  const { data: mealLogs, error } = await supabase
+    .from('meal_logs')
+    .select('eaten_at')
+    .gte('eaten_at', getStartOfDay(sevenDaysAgo).toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
+  }
+
+  // Group by date
+  const dateCountMap = new Map<string, number>();
+  (mealLogs || []).forEach((meal) => {
+    const date = new Date(meal.eaten_at);
+    const dateStr = date.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    dateCountMap.set(dateStr, (dateCountMap.get(dateStr) || 0) + 1);
+  });
+
+  // Generate last 7 days stats
+  const stats = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    const displayDate = date.toLocaleDateString('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    stats.push({
+      date: displayDate,
+      mealCount: dateCountMap.get(dateStr) || 0,
+      hasRecords: (dateCountMap.get(dateStr) || 0) > 0,
+    });
+  }
+
+  return stats;
+}
+
+// Get top tags from meal logs
+export async function getTopTags(
+  limit: number = 10
+): Promise<Array<{ tag: string; count: number }>> {
+  const supabase = await createClient();
+
+  // Get all meal logs with tags
+  const { data: mealLogs, error } = await supabase
+    .from('meal_logs')
+    .select('tags')
+    .not('tags', 'is', null);
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
+  }
+
+  // Count tags
+  const tagCountMap = new Map<string, number>();
+  (mealLogs || []).forEach((meal) => {
+    if (meal.tags && Array.isArray(meal.tags)) {
+      meal.tags.forEach((tag) => {
+        tagCountMap.set(tag, (tagCountMap.get(tag) || 0) + 1);
+      });
+    }
+  });
+
+  // Sort by count and return top tags
+  const sortedTags = Array.from(tagCountMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([tag, count]) => ({ tag, count }));
+
+  return sortedTags;
+}
+
+// ============================================
+// Price Statistics Actions
+// ============================================
+
+// Get recent days price statistics (last 7 days)
+export async function getRecentDaysPriceStats(): Promise<
+  Array<{ date: string; totalPrice: number; hasRecords: boolean }>
+> {
+  const supabase = await createClient();
+
+  // Get meal logs from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+  const { data: mealLogs, error } = await supabase
+    .from('meal_logs')
+    .select('eaten_at, price')
+    .gte('eaten_at', getStartOfDay(sevenDaysAgo).toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
+  }
+
+  // Group by date and sum prices
+  const datePriceMap = new Map<string, number>();
+  (mealLogs || []).forEach((meal) => {
+    const date = new Date(meal.eaten_at);
+    const dateStr = date.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    const price = meal.price || 0;
+    datePriceMap.set(dateStr, (datePriceMap.get(dateStr) || 0) + price);
+  });
+
+  // Generate last 7 days stats
+  const stats = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    const displayDate = date.toLocaleDateString('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    stats.push({
+      date: displayDate,
+      totalPrice: datePriceMap.get(dateStr) || 0,
+      hasRecords: (datePriceMap.get(dateStr) || 0) > 0,
+    });
+  }
+
+  return stats;
+}
+
+// Get total price statistics for different time periods
+export async function getTotalPriceStats(): Promise<{
+  todayTotal: number;
+  weekTotal: number;
+  monthTotal: number;
+  averageDaily: number;
+}> {
+  const supabase = await createClient();
+
+  const todayStart = getStartOfDay();
+  const todayEnd = getEndOfDay();
+  const weekStart = getStartOfDay(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  const monthStart = getStartOfDay(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+
+  // Get today's meal logs
+  const { data: todayLogs } = await supabase
+    .from('meal_logs')
+    .select('price')
+    .gte('eaten_at', todayStart.toISOString())
+    .lte('eaten_at', todayEnd.toISOString());
+
+  const todayTotal = (todayLogs || []).reduce((sum, meal) => sum + (meal.price || 0), 0);
+
+  // Get week's meal logs
+  const { data: weekLogs } = await supabase
+    .from('meal_logs')
+    .select('price')
+    .gte('eaten_at', weekStart.toISOString());
+
+  const weekTotal = (weekLogs || []).reduce((sum, meal) => sum + (meal.price || 0), 0);
+
+  // Get month's meal logs
+  const { data: monthLogs } = await supabase
+    .from('meal_logs')
+    .select('price')
+    .gte('eaten_at', monthStart.toISOString());
+
+  const monthTotal = (monthLogs || []).reduce((sum, meal) => sum + (meal.price || 0), 0);
+
+  // Calculate average daily for the last 7 days
+  const averageDaily = weekTotal / 7;
+
+  return {
+    todayTotal,
+    weekTotal,
+    monthTotal,
+    averageDaily,
+  };
 }

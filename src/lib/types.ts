@@ -73,23 +73,3 @@ export interface UserProfileInput {
   timezone?: string;
   language?: string;
 }
-
-// Diet Recommendation Types
-export interface DietRecommendation {
-  id: string;
-  title: string;
-  description: string;
-  category: 'meal' | 'tip' | 'warning';
-  priority: 'high' | 'medium' | 'low';
-  icon: string;
-}
-
-export interface NutritionAnalysis {
-  totalCalories: number;
-  totalProtein: number;
-  totalCarbs: number;
-  totalFat: number;
-  averageCaloriesPerMeal: number;
-  mealCount: number;
-  recommendations: DietRecommendation[];
-}
