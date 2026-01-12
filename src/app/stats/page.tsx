@@ -4,6 +4,8 @@ import {
   getTopTags,
   getTotalPriceStats,
   getRecentDaysPriceStats,
+  getRecentWeeksPriceStats,
+  getMonthlyPriceStats,
 } from '../actions';
 import StatsCard from '@/components/StatsCard';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -19,6 +21,8 @@ export default async function StatsPage() {
     averageDaily: number;
   } | null = null;
   let recentDaysPriceStats: Array<{ date: string; totalPrice: number; hasRecords: boolean }> = [];
+  let recentWeeksPriceStats: Array<{ date: string; totalPrice: number; hasRecords: boolean }> = [];
+  let monthlyPriceStats: Array<{ date: string; totalPrice: number; hasRecords: boolean }> = [];
   let error = null;
 
   try {
@@ -27,6 +31,8 @@ export default async function StatsPage() {
     topTags = await getTopTags(10);
     priceStats = await getTotalPriceStats();
     recentDaysPriceStats = await getRecentDaysPriceStats();
+    recentWeeksPriceStats = await getRecentWeeksPriceStats(4);
+    monthlyPriceStats = await getMonthlyPriceStats();
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to fetch stats';
   }
@@ -60,6 +66,8 @@ export default async function StatsPage() {
             topTags={topTags}
             priceStats={priceStats || undefined}
             recentDaysPriceStats={recentDaysPriceStats}
+            recentWeeksPriceStats={recentWeeksPriceStats}
+            monthlyPriceStats={monthlyPriceStats}
           />
         </main>
       </div>

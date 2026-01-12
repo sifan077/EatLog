@@ -5,6 +5,8 @@ import {
   getTopTags,
   getRecentDaysPriceStats,
   getTotalPriceStats,
+  getRecentWeeksPriceStats,
+  getMonthlyPriceStats,
 } from '../actions';
 import { createClient } from '@/utils/supabase/server';
 import ProfileForm from '@/components/ProfileForm';
@@ -38,15 +40,25 @@ export default async function ProfilePage() {
     );
   }
 
-  const [profile, streakDays, recentDaysStats, topTags, recentDaysPriceStats, priceStats] =
-    await Promise.all([
-      getUserProfile(),
-      getStreakDays(),
-      getRecentDaysStats(),
-      getTopTags(8),
-      getRecentDaysPriceStats(),
-      getTotalPriceStats(),
-    ]);
+  const [
+    profile,
+    streakDays,
+    recentDaysStats,
+    topTags,
+    recentDaysPriceStats,
+    priceStats,
+    recentWeeksPriceStats,
+    monthlyPriceStats,
+  ] = await Promise.all([
+    getUserProfile(),
+    getStreakDays(),
+    getRecentDaysStats(),
+    getTopTags(8),
+    getRecentDaysPriceStats(),
+    getTotalPriceStats(),
+    getRecentWeeksPriceStats(4),
+    getMonthlyPriceStats(),
+  ]);
 
   return (
     <DashboardLayout>
@@ -62,6 +74,8 @@ export default async function ProfilePage() {
               topTags={topTags}
               priceStats={priceStats}
               recentDaysPriceStats={recentDaysPriceStats}
+              recentWeeksPriceStats={recentWeeksPriceStats}
+              monthlyPriceStats={monthlyPriceStats}
             />
           </div>
 

@@ -499,3 +499,129 @@ export async function getTotalPriceStats(): Promise<{
     averageDaily,
   };
 }
+
+// Get recent weeks price statistics
+export async function getRecentWeeksPriceStats(
+  weeks: number = 4
+): Promise<Array<{ date: string; totalPrice: number; hasRecords: boolean }>> {
+  const supabase = await createClient();
+
+  // Get meal logs from the last N weeks
+  const weeksAgo = new Date();
+  weeksAgo.setDate(weeksAgo.getDate() - weeks * 7);
+
+  const { data: mealLogs, error } = await supabase
+    .from('meal_logs')
+    .select('eaten_at, price')
+    .gte('eaten_at', getStartOfDay(weeksAgo).toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
+  }
+
+  // Group by week and sum prices
+  const weekPriceMap = new Map<string, number>();
+
+  (mealLogs || []).forEach((meal) => {
+    const date = new Date(meal.eaten_at);
+    // Get the start of the week (Monday)
+    const dayOfWeek = date.getDay();
+    const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const weekStart = new Date(date.setDate(diff));
+    const weekStr = weekStart.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    const price = meal.price || 0;
+    weekPriceMap.set(weekStr, (weekPriceMap.get(weekStr) || 0) + price);
+  });
+
+  // Generate last N weeks stats
+  const stats = [];
+  const today = new Date();
+  const currentDayOfWeek = today.getDay();
+  const currentWeekStart = new Date(today);
+  currentWeekStart.setDate(today.getDate() - currentDayOfWeek + (currentDayOfWeek === 0 ? -6 : 1));
+
+  for (let i = weeks - 1; i >= 0; i--) {
+    const weekStart = new Date(currentWeekStart);
+    weekStart.setDate(weekStart.getDate() - i * 7);
+    const weekStr = weekStart.toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+
+    // Calculate week end (Sunday)
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    // Format display date
+    const displayDate = `${weekStart.getMonth() + 1}/${weekStart.getDate()}`;
+
+    stats.push({
+      date: displayDate,
+      totalPrice: weekPriceMap.get(weekStr) || 0,
+      hasRecords: (weekPriceMap.get(weekStr) || 0) > 0,
+    });
+  }
+
+  return stats;
+}
+
+// Get monthly price statistics for a specific year
+export async function getMonthlyPriceStats(
+  year?: number
+): Promise<Array<{ date: string; totalPrice: number; hasRecords: boolean }>> {
+  const supabase = await createClient();
+
+  const targetYear = year || new Date().getFullYear();
+
+  // Get meal logs for the specified year
+  const yearStart = new Date(targetYear, 0, 1);
+  const yearEnd = new Date(targetYear, 11, 31);
+
+  const { data: mealLogs, error } = await supabase
+    .from('meal_logs')
+    .select('eaten_at, price')
+    .gte('eaten_at', getStartOfDay(yearStart).toISOString())
+    .lte('eaten_at', getEndOfDay(yearEnd).toISOString())
+    .order('eaten_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(`Failed to fetch meal logs: ${error.message} (Code: ${error.code})`);
+  }
+
+  // Group by month and sum prices
+  const monthPriceMap = new Map<number, number>();
+
+  (mealLogs || []).forEach((meal) => {
+    const date = new Date(meal.eaten_at);
+    const month = date.getMonth();
+    const price = meal.price || 0;
+    monthPriceMap.set(month, (monthPriceMap.get(month) || 0) + price);
+  });
+
+  // Generate all 12 months stats
+  const stats = [];
+  const monthNames = [
+    '1月',
+    '2月',
+    '3月',
+    '4月',
+    '5月',
+    '6月',
+    '7月',
+    '8月',
+    '9月',
+    '10月',
+    '11月',
+    '12月',
+  ];
+
+  for (let month = 0; month < 12; month++) {
+    stats.push({
+      date: monthNames[month],
+      totalPrice: monthPriceMap.get(month) || 0,
+      hasRecords: (monthPriceMap.get(month) || 0) > 0,
+    });
+  }
+
+  return stats;
+}

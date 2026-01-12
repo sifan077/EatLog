@@ -1,5 +1,16 @@
 'use client';
 
+import { useState } from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
+
 interface StatsCardProps {
   streakDays: number;
   recentDaysStats: Array<{ date: string; mealCount: number; hasRecords: boolean }>;
@@ -11,7 +22,11 @@ interface StatsCardProps {
     averageDaily: number;
   };
   recentDaysPriceStats?: Array<{ date: string; totalPrice: number; hasRecords: boolean }>;
+  recentWeeksPriceStats?: Array<{ date: string; totalPrice: number; hasRecords: boolean }>;
+  monthlyPriceStats?: Array<{ date: string; totalPrice: number; hasRecords: boolean }>;
 }
+
+type TimeRange = '7days' | '4weeks' | 'year';
 
 export default function StatsCard({
   streakDays,
@@ -19,14 +34,44 @@ export default function StatsCard({
   topTags,
   priceStats,
   recentDaysPriceStats,
+  recentWeeksPriceStats,
+  monthlyPriceStats,
 }: StatsCardProps) {
-  // Calculate max price for scaling
-  const maxPrice = recentDaysPriceStats
-    ? Math.max(...recentDaysPriceStats.map((day) => day.totalPrice), 1)
-    : 1;
+  const [timeRange, setTimeRange] = useState<TimeRange>('7days');
 
   const formatPrice = (price: number) => {
     return price.toFixed(2);
+  };
+
+  // Get chart data based on selected time range
+  const getChartData = () => {
+    switch (timeRange) {
+      case '7days':
+        return recentDaysPriceStats || [];
+      case '4weeks':
+        return recentWeeksPriceStats || [];
+      case 'year':
+        return monthlyPriceStats || [];
+      default:
+        return recentDaysPriceStats || [];
+    }
+  };
+
+  const chartData = getChartData();
+
+  // Custom tooltip
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 shadow-lg">
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{label}</p>
+          <p className="text-sm text-emerald-600 dark:text-emerald-400">
+            ¥{formatPrice(payload[0].value)}
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -97,137 +142,87 @@ export default function StatsCard({
         </div>
       )}
 
-      {/* Recent 7 Days Price Stats */}
-      {recentDaysPriceStats && recentDaysPriceStats.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+      {/* Price Trend Chart */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <span>📈</span>
-            最近 7 天花费趋势
+            花费趋势
           </h3>
-          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
-            <svg viewBox="0 0 400 120" className="w-full h-32 sm:h-40" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#10b981" />
-                  <stop offset="100%" stopColor="#34d399" />
-                </linearGradient>
-                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                </linearGradient>
-              </defs>
 
-              {/* Grid lines */}
-              {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
-                <line
-                  key={ratio}
-                  x1="0"
-                  y1={120 - ratio * 100}
-                  x2="400"
-                  y2={120 - ratio * 100}
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                  className="text-gray-300 dark:text-gray-600"
-                  strokeDasharray="4 4"
-                />
-              ))}
-
-              {/* Area fill */}
-              <path
-                d={`M 0 120 ${recentDaysPriceStats
-                  .map((day, index) => {
-                    const x = (index / (recentDaysPriceStats.length - 1)) * 400;
-                    const y = 120 - (day.totalPrice / maxPrice) * 100;
-                    return `L ${x} ${y}`;
-                  })
-                  .join(' ')} L 400 120 Z`}
-                fill="url(#areaGradient)"
-              />
-
-              {/* Line */}
-              <path
-                d={`M 0 ${120 - (recentDaysPriceStats[0].totalPrice / maxPrice) * 100} ${recentDaysPriceStats
-                  .map((day, index) => {
-                    const x = (index / (recentDaysPriceStats.length - 1)) * 400;
-                    const y = 120 - (day.totalPrice / maxPrice) * 100;
-                    return `L ${x} ${y}`;
-                  })
-                  .join(' ')}`}
-                fill="none"
-                stroke="url(#lineGradient)"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="drop-shadow-lg"
-              />
-
-              {/* Data points */}
-              {recentDaysPriceStats.map((day, index) => {
-                const x = (index / (recentDaysPriceStats.length - 1)) * 400;
-                const y = 120 - (day.totalPrice / maxPrice) * 100;
-                const isToday = index === recentDaysPriceStats.length - 1;
-
-                return (
-                  <g key={day.date}>
-                    {/* Outer circle for hover effect */}
-                    {isToday && (
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r="8"
-                        fill="#10b981"
-                        fillOpacity="0.2"
-                        className="animate-pulse"
-                      />
-                    )}
-                    {/* Data point circle */}
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r={isToday ? 5 : 4}
-                      fill={isToday ? '#10b981' : '#fff'}
-                      stroke="#10b981"
-                      strokeWidth={isToday ? 3 : 2}
-                      className="transition-all duration-300"
-                    />
-                  </g>
-                );
-              })}
-            </svg>
-
-            {/* X-axis labels */}
-            <div className="flex justify-between mt-2 px-1">
-              {recentDaysPriceStats.map((day, index) => {
-                const isToday = index === recentDaysPriceStats.length - 1;
-                return (
-                  <div
-                    key={day.date}
-                    className={`text-xs font-medium ${
-                      isToday
-                        ? 'text-green-600 dark:text-green-400 font-bold'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    {day.date}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Price labels */}
-            <div className="flex justify-between mt-1 px-1">
-              {recentDaysPriceStats.map((day) => (
-                <div
-                  key={`price-${day.date}`}
-                  className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 text-center"
-                >
-                  {day.hasRecords ? `¥${formatPrice(day.totalPrice)}` : '-'}
-                </div>
-              ))}
-            </div>
+          {/* Time Range Toggle */}
+          <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+            <button
+              onClick={() => setTimeRange('7days')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                timeRange === '7days'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              最近7天
+            </button>
+            <button
+              onClick={() => setTimeRange('4weeks')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                timeRange === '4weeks'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              最近4周
+            </button>
+            <button
+              onClick={() => setTimeRange('year')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                timeRange === 'year'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              今年
+            </button>
           </div>
         </div>
-      )}
+
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="currentColor"
+                className="text-gray-300 dark:text-gray-600"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="date"
+                stroke="currentColor"
+                className="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
+                tick={{ fill: 'currentColor' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="currentColor"
+                className="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
+                tick={{ fill: 'currentColor' }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `¥${value}`}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="totalPrice"
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                activeDot={{ fill: '#10b981', strokeWidth: 2, r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
       {/* Top Tags */}
       <div>
