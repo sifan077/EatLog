@@ -15,7 +15,7 @@ export function getPhotoPublicUrl(photoPath: string): string {
 // Extract file extension from file name
 export function getFileExtension(fileName: string): string {
   const parts = fileName.split('.');
-  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'jpg';
+  return parts.length > 1 ? parts[parts.length - 1]?.toLowerCase() || 'jpg' : 'jpg';
 }
 
 // Validate file type (only allow images)
