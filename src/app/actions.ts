@@ -489,8 +489,10 @@ export async function getTotalPriceStats(): Promise<{
 
   const monthTotal = (monthLogs || []).reduce((sum, meal) => sum + (meal.price || 0), 0);
 
-  // Calculate average daily for the last 7 days
-  const averageDaily = weekTotal / 7;
+  // Calculate average daily for the current month
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const averageDaily = monthTotal / daysInMonth;
 
   return {
     todayTotal,
